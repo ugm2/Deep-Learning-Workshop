@@ -6,31 +6,6 @@ from LogisticRegression.logistic_regression import LogisticRegression
 import pandas as pd
 
 
-# # Image size
-# IMAGE_SIZE = 32
-
-# # Load Cat vs Dog dataset
-# train_ds, test_ds = tfds.load(name="cats_vs_dogs", split=["train[:80%]","train[80%:]"], as_supervised=True, shuffle_files=True)
-
-# # Normalize, resize data and convert to Numpy
-# def normalize(image, label):
-#   image = tf.cast(image, tf.float32)
-#   image /= 255
-#   image = tf.image.resize(image, (IMAGE_SIZE, IMAGE_SIZE))
-#   return image, label
-# train_ds = tfds.as_numpy(train_ds.map(normalize))
-# test_ds = tfds.as_numpy(test_ds.map(normalize))
-
-# # Unwrap dataset into inputs and labels
-# X_train, y_train = zip(*train_ds)
-# X_test, y_test = zip(*test_ds)
-# X_train, y_train = np.array(X_train), np.array(y_train)
-# X_test, y_test = np.array(X_test), np.array(y_test)
-
-# # Reshape data
-# X_train = X_train.reshape(X_train.shape[0], -1).T
-# X_test = X_test.reshape(X_test.shape[0], -1).T
-
 # Load Titanic dataset
 train = pd.read_csv('data/titanic_train.csv', index_col='PassengerId')
 test = pd.read_csv('data/titanic_test.csv', index_col='PassengerId')
