@@ -32,8 +32,8 @@ import pandas as pd
 # X_test = X_test.reshape(X_test.shape[0], -1).T
 
 # Load Titanic dataset
-train = pd.read_csv('titanic_train.csv', index_col='PassengerId')
-test = pd.read_csv('titanic_test.csv', index_col='PassengerId')
+train = pd.read_csv('data/titanic_train.csv', index_col='PassengerId')
+test = pd.read_csv('data/titanic_test.csv', index_col='PassengerId')
 
 # Fill in missing values for Age and Embarked
 train['Age'] = train['Age'].fillna(train['Age'].median())
@@ -67,18 +67,40 @@ y_val = y_val.values
 X_test = X_test.values.T
 
 # Create model and fit
-lr_model = LogisticRegression(learning_rate=0.01, num_iter=100000, verbose=True)
+lr_model = LogisticRegression(learning_rate=0.01, num_iter=1000, verbose=True)
 lr_model.fit(X_train, y_train, validation_data=(X_val, y_val))
 
-# Predict test set
-predictions = lr_model.predict(X_test)[0]
+# Get scores
+print('Train accuracy:', lr_model.score(X_train, y_train))
+print('Validation accuracy:', lr_model.score(X_val, y_val))
 
-# Convert True/False to 1/0
-predictions = np.array([1 if x == True else 0 for x in predictions])
+# Save model
+lr_model.save('models/titanic_model.npy')
 
-# Save CSV
-submission_df = pd.DataFrame({
-    'PassengerId': test.index,
-    'Survived': predictions
-})
-submission_df.to_csv('submission.csv', index=False)
+# Load model from file
+lr_model = LogisticRegression(learning_rate=0.01, num_iter=8000, verbose=True)
+lr_model.load('models/titanic_model.npy')
+
+# Train again
+lr_model.fit(X_train, y_train, validation_data=(X_val, y_val))
+
+# Get scores
+print('Train accuracy:', lr_model.score(X_train, y_train))
+print('Validation accuracy:', lr_model.score(X_val, y_val))
+
+# Overwrite best model
+lr_model.save('models/titanic_model.npy')
+
+### THIS CODE IS FOR SUBMITTING RESULTS TO TITANIC KAGGLE COMPETITION ###
+# # Predict test set
+# predictions = lr_model.predict(X_test)[0]
+
+# # Convert True/False to 1/0
+# predictions = np.array([1 if x == True else 0 for x in predictions])
+
+# # Save CSV
+# submission_df = pd.DataFrame({
+#     'PassengerId': test.index,
+#     'Survived': predictions
+# })
+# submission_df.to_csv('data/submission.csv', index=False)

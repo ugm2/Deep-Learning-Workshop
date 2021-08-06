@@ -73,8 +73,9 @@ class LogisticRegression:
         """
         Fit the model given data
         """
-        # Initialize weights and bias
-        self.w, self.b = self.init_params(X.shape[0])
+        # Initialize weights and bias if None
+        if self.w is None or self.b is None:
+            self.w, self.b = self.init_params(X.shape[0])
         # Optimize weights and bias
         self.grads, self.costs = self.optimize(X, Y)
         # Predict the labels
@@ -100,3 +101,22 @@ class LogisticRegression:
         Y_prediction = A > np.full(A.shape, 0.5)
 
         return Y_prediction
+
+    def score(self, X, Y):
+        """
+        Returns the mean accuracy on the given test data and labels
+        """
+        Y_prediction = self.predict(X)
+        return round(1 - np.mean(np.abs(Y_prediction - Y)), 2)
+
+    def save(self, path):
+        """
+        Save the model parameters to the given path
+        """
+        np.save(path, np.array([self.w, self.b], dtype=object))
+
+    def load(self, path):
+        """
+        Load model parameters from the given path
+        """
+        self.w, self.b = np.load(path, allow_pickle=True)
