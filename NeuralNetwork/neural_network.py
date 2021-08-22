@@ -64,13 +64,12 @@ class NeuralNetwork:
         """
         A = X
         L = len(self.layers)
-
-        for l in range(1, L+1):
+        for l in range(1, L):
             W = self.parameters['W' + str(l)]
             b = self.parameters['b' + str(l)]
             Z = np.dot(W, A) + b
             self.parameters['Z' + str(l)] = Z
-            activation_function = self.activations[l]
+            activation_function = self.activations[l-1]
             A = self.activation_functions[activation_function](Z)
 
         return A
@@ -86,7 +85,7 @@ class NeuralNetwork:
             cost: A float value containing the cost
         """
         # TODO: Generalize and add more cost functions
-        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / Y.shape[1]
+        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / Y.shape[0]
         return cost
 
     def _backward(self, A, Y):
@@ -109,19 +108,19 @@ class NeuralNetwork:
         for l in reversed(range(1, L)):
             W = self.parameters['W' + str(l)]
             Z = self.parameters['Z' + str(l)]
-            activation_function = self.activations[l]
+            activation_function = self.activations[l-1]
             backward_activation_function = self.backward_activation_functions[activation_function]
             dZ = dA * backward_activation_function(Z)
             dA = np.dot(W.T, dZ)
-            self.grads['dW' + str(l)] = np.dot(dZ, A.T) / Y.shape[1]
-            self.grads['db' + str(l)] = np.sum(dZ, axis=1, keepdims=True) / Y.shape[1]
+            self.grads['dW' + str(l)] = np.dot(dZ, A.T) / Y.shape[0]
+            self.grads['db' + str(l)] = np.sum(dZ, axis=1, keepdims=True) / Y.shape[0]
 
     def _update_parameters(self):
         """
         Updates the parameters using gradient descent
         """
         L = len(self.layers)
-        for l in range(1, L+1):
+        for l in range(1, L):
             self.parameters['W' + str(l)] = self.parameters['W' + str(l)] - self.learning_rate * self.grads['dW' + str(l)]
             self.parameters['b' + str(l)] = self.parameters['b' + str(l)] - self.learning_rate * self.grads['db' + str(l)]
 
@@ -141,5 +140,37 @@ class NeuralNetwork:
             if self.verbose and i % 100 == 0:
                 print('Iteration {}: Cost = {}'.format(i, cost))
 
-    # TODO: Predict, Score, Save, Load
+        # Print accuracy if verbose
+        if self.verbose:
+            print('Train accuracy: {}'.format(self.evaluate(X, Y)))
+
+    def predict(self, X):
+        """
+        Predicts the output of the model for a set of inputs
+
+        Args:
+            X: A numpy.ndarray with shape (nx, m) that contains the input data
+        Returns:
+            Y_prediction: A numpy.ndarray with shape (1, m) that contains the predictions
+        """
+
+        Y_prediction = self._forward(X)
+        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+        return Y_prediction
+
+    def evaluate(self, X, Y):
+        """
+        Evaluates the model's predictions
+
+        Args:
+            X: A numpy.ndarray with shape (nx, m) that contains the input data
+            Y: A numpy.ndarray with shape (1, m) that contains the training labels
+        Returns:
+            accuracy: A float value containing the accuracy of the model's predictions
+        """
+        Y_prediction = self.predict(X)
+        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+        return np.sum(Y_prediction == Y) / Y.shape[0]
+
+    # TODO: Save, Load
 
