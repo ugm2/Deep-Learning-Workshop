@@ -1,7 +1,8 @@
 from sklearn.model_selection import train_test_split
 from NeuralNetwork.neural_network import NeuralNetwork
 import pandas as pd
-
+import numpy as np
+np.random.seed(1)
 
 # Load Titanic dataset
 train = pd.read_csv('data/titanic_train.csv', index_col='PassengerId')
@@ -34,17 +35,18 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 # Dataframes to numpy arrays
 X_train = X_train.values.T
 X_val = X_val.values.T
-y_train = y_train.values
+y_train = y_train.values.reshape(1, y_train.shape[0])
 y_val = y_val.values
 X_test = X_test.values.T
+print(y_train.shape)
 
 nn_model = NeuralNetwork(
     layers_dict={
-        'layers': [X_train.shape[0], 5, 5, 1],
-        'activations': ['relu', 'relu', 'sigmoid']
+        'layers': [X_train.shape[0], 20, 20, 7, 5, 1],
+        'activations': ['relu', 'relu', 'relu', 'relu', 'sigmoid']
     },
-    learning_rate=0.01,
-    num_iterations=10000,
+    learning_rate=0.0075,
+    num_iterations=5000,
     verbose=True
 )
 nn_model.fit(X_train, y_train)

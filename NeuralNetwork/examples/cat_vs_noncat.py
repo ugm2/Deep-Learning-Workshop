@@ -47,18 +47,13 @@ test_x = test_x_flatten/255.
 print ("train_x's shape: " + str(train_x.shape))
 print ("test_x's shape: " + str(test_x.shape))
 
-# nn_model = NeuralNetwork(
-#     layers_dict={
-#         'layers': [train_x.shape[0], 20, 7, 5, 1],
-#         'activations': ['relu', 'relu', 'relu', 'sigmoid']
-#     },
-#     learning_rate=0.0075,
-#     num_iterations=1000,
-#     verbose=True
-# )
-# nn_model.fit(train_x, train_y)
-
-layers_dims = [12288, 20, 7, 5, 1] #  4-layer model
-parameters, costs = L_layer_model(train_x, train_y, layers_dims, num_iterations = 2500, print_cost = True)
-
-# pred_train = predict(train_x, train_y, parameters)
+nn_model = NeuralNetwork(
+    layers_dict={
+        'layers': [train_x.shape[0], 20, 7, 5, 1],
+        'activations': ['relu', 'relu', 'relu', 'sigmoid']
+    },
+    learning_rate=0.0075,
+    num_iterations=2500,
+    verbose=True
+)
+nn_model.fit(train_x, train_y)
