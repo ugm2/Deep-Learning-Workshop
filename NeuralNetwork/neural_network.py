@@ -1,27 +1,6 @@
 import numpy as np
 from copy import deepcopy
 
-def relu_backward(dA, cache):
-    """
-    Implement the backward propagation for a single RELU unit.
-    Arguments:
-    dA -- post-activation gradient, of any shape
-    cache -- 'Z' where we store for computing backward propagation efficiently
-    Returns:
-    dZ -- Gradient of the cost with respect to Z
-    """
-    
-    Z = cache
-    dZ = np.array(dA, copy=True) # just converting dz to a correct object.
-    
-    # When z <= 0, you should set dz to 0 as well. 
-    dZ[Z <= 0] = 0
-    
-    assert (dZ.shape == Z.shape)
-    
-    return dZ
-
-
 class NeuralNetwork:
 
     def __init__(self, layers_dict, learning_rate=0.01, num_iterations=10000, verbose=False):
@@ -55,7 +34,7 @@ class NeuralNetwork:
         self.backward_activation_functions['sigmoid'] = lambda dA, Z: dA * (sigmoid(Z) * (1 - sigmoid(Z)))
         # ReLU
         self.activation_functions['relu'] = lambda x: np.maximum(0, x)
-        self.backward_activation_functions['relu'] = lambda _, Z: np.where(Z > 0, 1, 0)
+        self.backward_activation_functions['relu'] = lambda dA, Z: np.where(Z <= 0, 0, dA)
         # TODO: Add more activation functions
 
         # Validate activations
@@ -72,7 +51,7 @@ class NeuralNetwork:
         L = len(self.layers)
 
         for l in range(1, L):
-            self.parameters['W' + str(l)] = np.random.randn(self.layers[l], self.layers[l-1]) * 0.01
+            self.parameters['W' + str(l)] = np.random.randn(self.layers[l], self.layers[l-1]) / np.sqrt(self.layers[l-1])
             self.parameters['b' + str(l)] = np.zeros((self.layers[l], 1))
 
     def _forward(self, X):
@@ -165,7 +144,6 @@ class NeuralNetwork:
             self._update_parameters()
             if self.verbose and i % 100 == 0:
                 print('Iteration {}: Cost = {}'.format(i, cost))
-
 
         # Print accuracy if verbose
         if self.verbose:
