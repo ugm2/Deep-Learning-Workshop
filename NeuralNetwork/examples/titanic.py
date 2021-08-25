@@ -36,20 +36,18 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 X_train = X_train.values.T
 X_val = X_val.values.T
 y_train = y_train.values.reshape(1, y_train.shape[0])
-y_val = y_val.values
+y_val = y_val.values.reshape(1, y_val.shape[0])
 X_test = X_test.values.T
-print(y_train.shape)
 
 nn_model = NeuralNetwork(
     layers_dict={
-        'layers': [X_train.shape[0], 20, 20, 7, 5, 1],
-        'activations': ['relu', 'relu', 'relu', 'relu', 'sigmoid']
+        'layers': [X_train.shape[0], 20, 20, 15, 7, 5, 1],
+        'activations': ['relu', 'relu', 'relu', 'relu', 'relu', 'sigmoid']
     },
     learning_rate=0.0075,
-    num_iterations=5000,
     verbose=True
 )
-nn_model.fit(X_train, y_train)
+nn_model.fit(X_train, y_train, epochs=15000)
 # for weight, values in nn_model.parameters.items():
 #     print(f'{weight}:\n{values.shape}')
 
@@ -57,9 +55,9 @@ nn_model.fit(X_train, y_train)
 # lr_model = LogisticRegression(learning_rate=0.01, num_iter=1000, verbose=False)
 # lr_model.fit(X_train, y_train, validation_data=(X_val, y_val))
 
-# # Get scores
-# print('Train accuracy:', lr_model.score(X_train, y_train))
-# print('Validation accuracy:', lr_model.score(X_val, y_val))
+# Get scores
+print('Train accuracy:', nn_model.evaluate(X_train, y_train))
+print('Validation accuracy:', nn_model.evaluate(X_val, y_val))
 
 # # Save model
 # lr_model.save('models/titanic_model.npy')

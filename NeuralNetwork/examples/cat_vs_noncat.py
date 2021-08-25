@@ -1,4 +1,3 @@
-from NeuralNetwork.nn_coursera import L_layer_model, predict
 import numpy as np
 import h5py
 from NeuralNetwork.neural_network import NeuralNetwork
@@ -53,7 +52,15 @@ nn_model = NeuralNetwork(
         'activations': ['relu', 'relu', 'relu', 'sigmoid']
     },
     learning_rate=0.0075,
-    num_iterations=2500,
     verbose=True
 )
-nn_model.fit(train_x, train_y)
+nn_model.fit(train_x, train_y, epochs=200)
+
+nn_model.save('models/cat_vs_noncat')
+
+nn_model_2 = NeuralNetwork(learning_rate=0.0075, verbose=True).load('models/cat_vs_noncat')
+
+nn_model.fit(train_x, train_y, epochs=2000)
+
+print ("Evaluate on test set")
+print ("Accuracy: " + str(nn_model.evaluate(test_x, test_y)))

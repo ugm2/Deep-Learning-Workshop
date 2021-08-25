@@ -39,8 +39,8 @@ y_val = y_val.values
 X_test = X_test.values.T
 
 # Create model and fit
-lr_model = LogisticRegression(learning_rate=0.01, num_iter=1000, verbose=False)
-lr_model.fit(X_train, y_train, validation_data=(X_val, y_val))
+lr_model = LogisticRegression(learning_rate=0.01, verbose=False)
+lr_model.fit(X_train, y_train, epochs=1000, validation_data=(X_val, y_val))
 
 # Get scores
 print('Train accuracy:', lr_model.score(X_train, y_train))
@@ -50,11 +50,11 @@ print('Validation accuracy:', lr_model.score(X_val, y_val))
 lr_model.save('models/titanic_model.npy')
 
 # Load model from file
-lr_model = LogisticRegression(learning_rate=0.01, num_iter=8000, verbose=False)
+lr_model = LogisticRegression(learning_rate=0.01, verbose=False)
 lr_model.load('models/titanic_model.npy')
 
 # Train again
-lr_model.fit(X_train, y_train, validation_data=(X_val, y_val))
+lr_model.fit(X_train, y_train, epochs=8000, validation_data=(X_val, y_val))
 
 # Get scores
 print("From Scratch Model FINAL")

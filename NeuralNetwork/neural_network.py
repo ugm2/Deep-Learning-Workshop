@@ -1,20 +1,26 @@
 import numpy as np
-from copy import deepcopy
+import h5py
+from pathlib import Path
 
 class NeuralNetwork:
 
-    def __init__(self, layers_dict, learning_rate=0.01, num_iterations=10000, verbose=False):
+    def __init__(self, layers_dict=None, learning_rate=0.01, verbose=False):
         """
         Initializes the NeuralNetwork class
 
         Args:
             layers_dict: A dictionary containing the number of nodes in each layer and its activations
+            learning_rate: A float value that specifies the learning rate
+            verbose: A boolean value that specifies whether to print the cost every 100 iterations
         """
         self.learning_rate = learning_rate
-        self.num_iterations = num_iterations
         self.verbose = verbose
-        self.layers = layers_dict['layers']
-        self.activations = layers_dict['activations']
+        if layers_dict is not None:
+            self.layers = layers_dict['layers']
+            self.activations = layers_dict['activations']
+        else:
+            self.layers = []
+            self.activations = []
 
         # Initialize activation functions
         self._initialize_activation_functions()
@@ -128,7 +134,7 @@ class NeuralNetwork:
             self.parameters['W' + str(l)] = self.parameters['W' + str(l)] - self.learning_rate * self.grads['dW' + str(l)]
             self.parameters['b' + str(l)] = self.parameters['b' + str(l)] - self.learning_rate * self.grads['db' + str(l)]
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, epochs=1):
         """
         Trains the model
 
@@ -137,7 +143,7 @@ class NeuralNetwork:
             Y: A numpy.ndarray with shape (1, m) that contains the training labels
         """
         
-        for i in range(self.num_iterations):
+        for i in range(epochs):
             A = self._forward(X)
             cost = self._cost(Y, A)
             self._backward(A, Y)
@@ -177,5 +183,39 @@ class NeuralNetwork:
         Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
         return np.sum(Y_prediction == Y) / Y.shape[1]
 
-    # TODO: Save, Load
+    def save(self, filename):
+        """
+        Saves the model to a file
 
+        Args:
+            filename: A string containing the path to the file
+        """
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
+        filename = filename + '.hdf5'
+        f = h5py.File(filename, 'w')
+        for l in range(1, len(self.layers)):
+            # Save weights
+            f.create_dataset('W' + str(l), data=self.parameters['W' + str(l)])
+            f.create_dataset('b' + str(l), data=self.parameters['b' + str(l)])
+            # Save activation functions
+            f.attrs['activation_function' + str(l)] = self.activations[l-1]
+            # Save grads
+            f.create_dataset('grads_W' + str(l), data=self.grads['dW' + str(l)])
+            f.create_dataset('grads_b' + str(l), data=self.grads['db' + str(l)])
+        f.close()
+
+    def load(self, filename):
+        """
+        Loads the model from a file
+
+        Args:
+            filename: A string containing the path to the file
+        """
+        f = h5py.File(f'{filename}.hdf5', 'r')
+        for l in range(1, len(self.layers)):
+            self.parameters['W' + str(l)] = f['W' + str(l)][()]
+            self.parameters['b' + str(l)] = f['b' + str(l)][()]
+            self.activations[l-1] = f.attrs['activation_function' + str(l)]
+            self.grads['dW' + str(l)] = f['grads_W' + str(l)][()]
+            self.grads['db' + str(l)] = f['grads_b' + str(l)][()]
+        f.close()
