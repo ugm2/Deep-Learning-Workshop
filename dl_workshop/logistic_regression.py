@@ -101,12 +101,31 @@ class LogisticRegression:
 
         return Y_prediction
 
-    def score(self, X, Y):
+    def evaluate(self, X, Y):
         """
-        Returns the mean accuracy on the given test data and labels
+        Evaluates the model's predictions
+
+        Args:
+            X: A numpy.ndarray with shape (nx, m) that contains the input data
+            Y: A numpy.ndarray with shape (1, m) that contains the training labels
+        Returns:
+            accuracy: A float value containing the accuracy of the model's predictions
         """
+        # Predict and apply threshold 0.5
         Y_prediction = self.predict(X)
-        return round(1 - np.mean(np.abs(Y_prediction - Y)), 2)
+        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+        
+        # Obtain accuracy, precision, recall, and F1 score
+        accuracy = np.sum(Y_prediction == Y) / Y.shape[1]
+        precision = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        recall = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        f1 = 2 * precision * recall / (precision + recall)
+        
+        # Return as a dictionary
+        return {'accuracy': round(accuracy, 2),
+                'precision': round(precision, 2),
+                'recall': round(recall, 2),
+                'f1': round(f1, 2)}
 
     def save(self, path):
         """

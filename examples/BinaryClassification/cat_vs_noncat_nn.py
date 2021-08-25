@@ -1,6 +1,6 @@
 import numpy as np
 import h5py
-from NeuralNetwork.neural_network import NeuralNetwork
+from dl_workshop.neural_network import NeuralNetwork
 
 np.random.seed(1)
 
@@ -52,15 +52,19 @@ nn_model = NeuralNetwork(
         'activations': ['relu', 'relu', 'relu', 'sigmoid']
     },
     learning_rate=0.0075,
-    verbose=True
+    verbose=False
 )
-nn_model.fit(train_x, train_y, epochs=200)
+nn_model.fit(train_x, train_y, epochs=200, validation_data=(test_x, test_y))
 
 nn_model.save('models/cat_vs_noncat')
 
-nn_model_2 = NeuralNetwork(learning_rate=0.0075, verbose=True).load('models/cat_vs_noncat')
+nn_model_2 = NeuralNetwork(learning_rate=0.0075, verbose=False)
+nn_model_2.load('models/cat_vs_noncat')
 
-nn_model.fit(train_x, train_y, epochs=2000)
+nn_model_2.fit(train_x, train_y, epochs=2000, validation_data=(test_x, test_y))
 
-print ("Evaluate on test set")
-print ("Accuracy: " + str(nn_model.evaluate(test_x, test_y)))
+# Evaluate model with more metrics
+print("Training data:")
+print(nn_model_2.evaluate(train_x, train_y))
+print("Validation data:")
+print(nn_model_2.evaluate(test_x, test_y))

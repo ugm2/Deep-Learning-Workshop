@@ -1,5 +1,5 @@
 from sklearn.model_selection import train_test_split
-from LogisticRegression.logistic_regression import LogisticRegression
+from dl_workshop.logistic_regression import LogisticRegression
 import pandas as pd
 
 
@@ -34,17 +34,19 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 # Dataframes to numpy arrays
 X_train = X_train.values.T
 X_val = X_val.values.T
-y_train = y_train.values
-y_val = y_val.values
+y_train_shaped = y_train.values.reshape(1, y_train.shape[0])
+y_val_shaped = y_val.values.reshape(1, y_val.shape[0])
 X_test = X_test.values.T
 
 # Create model and fit
 lr_model = LogisticRegression(learning_rate=0.01, verbose=False)
-lr_model.fit(X_train, y_train, epochs=1000, validation_data=(X_val, y_val))
+lr_model.fit(X_train, y_train_shaped, epochs=1000, validation_data=(X_val, y_val_shaped))
 
 # Get scores
-print('Train accuracy:', lr_model.score(X_train, y_train))
-print('Validation accuracy:', lr_model.score(X_val, y_val))
+print("Evaluate on training data:")
+print(lr_model.score(X_train, y_train_shaped))
+print("Evaluate on validation data:")
+print(lr_model.score(X_val, y_val_shaped))
 
 # Save model
 lr_model.save('models/titanic_model.npy')
@@ -54,12 +56,14 @@ lr_model = LogisticRegression(learning_rate=0.01, verbose=False)
 lr_model.load('models/titanic_model.npy')
 
 # Train again
-lr_model.fit(X_train, y_train, epochs=8000, validation_data=(X_val, y_val))
+lr_model.fit(X_train, y_train_shaped, epochs=8000, validation_data=(X_val, y_val_shaped))
 
 # Get scores
 print("From Scratch Model FINAL")
-print('Train accuracy:', lr_model.score(X_train, y_train))
-print('Validation accuracy:', lr_model.score(X_val, y_val))
+print("Evaluate on training data:")
+print(lr_model.evaluate(X_train, y_train_shaped))
+print("Evaluate on validation data:")
+print(lr_model.evaluate(X_val, y_val_shaped))
 
 # Overwrite best model
 lr_model.save('models/titanic_model.npy')
@@ -78,25 +82,3 @@ lr_model.save('models/titanic_model.npy')
 # })
 # submission_df.to_csv('data/submission.csv', index=False)
 
-# SKLEARN MODEL #
-print("------------------------------------------------")
-print("Sklearn model")
-from sklearn.linear_model import LogisticRegression
-sklearn_lr_model = LogisticRegression(random_state=42, max_iter=1000)
-sklearn_lr_model.fit(X_train.T, y_train)
-score = sklearn_lr_model.score(X_train.T, y_train)
-print("Training accuracy:", round(score,2))
-score = sklearn_lr_model.score(X_val.T, y_val)
-print("Validation accuracy:", round(score,2))
-
-# KERAS MODEL #
-print("------------------------------------------------")
-print("Keras model")
-from LogisticRegression.logistic_regression_keras import LogisticRegressionKeras
-keras_lr_model = LogisticRegressionKeras(X_train.shape[0])
-keras_lr_model.fit(X_train.T, y_train, epochs=1000, batch_size=128, validation_data=(X_val.T, y_val), verbose=0)
-
-print("Training metrics")
-keras_lr_model.evaluate(X_train.T, y_train)
-print("Validation metrics")
-keras_lr_model.evaluate(X_val.T, y_val)

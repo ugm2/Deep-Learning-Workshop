@@ -16,7 +16,7 @@ class NeuralNetwork:
         self.learning_rate = learning_rate
         self.verbose = verbose
         if layers_dict is not None:
-            self.layers = layers_dict['layers']
+            self.layers = np.array(layers_dict['layers'])
             self.activations = layers_dict['activations']
         else:
             self.layers = []
@@ -134,7 +134,7 @@ class NeuralNetwork:
             self.parameters['W' + str(l)] = self.parameters['W' + str(l)] - self.learning_rate * self.grads['dW' + str(l)]
             self.parameters['b' + str(l)] = self.parameters['b' + str(l)] - self.learning_rate * self.grads['db' + str(l)]
 
-    def fit(self, X, Y, epochs=1):
+    def fit(self, X, Y, epochs=1, validation_data=None):
         """
         Trains the model
 
@@ -153,7 +153,9 @@ class NeuralNetwork:
 
         # Print accuracy if verbose
         if self.verbose:
-            print('Train accuracy: {}'.format(self.evaluate(X, Y)))
+            print('Train accuracy: {}'.format(self.evaluate(X, Y)['accuracy']))
+            if validation_data:
+                print('Validation accuracy: {}'.format(self.evaluate(validation_data[0], validation_data[1])['accuracy']))
 
     def predict(self, X):
         """
@@ -179,9 +181,21 @@ class NeuralNetwork:
         Returns:
             accuracy: A float value containing the accuracy of the model's predictions
         """
+        # Predict and apply threshold 0.5
         Y_prediction = self.predict(X)
         Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
-        return np.sum(Y_prediction == Y) / Y.shape[1]
+        
+        # Obtain accuracy, precision, recall, and F1 score
+        accuracy = np.sum(Y_prediction == Y) / Y.shape[1]
+        precision = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        recall = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        f1 = 2 * precision * recall / (precision + recall)
+        
+        # Return as a dictionary
+        return {'accuracy': round(accuracy, 2),
+                'precision': round(precision, 2),
+                'recall': round(recall, 2),
+                'f1': round(f1, 2)}
 
     def save(self, filename):
         """
@@ -197,11 +211,13 @@ class NeuralNetwork:
             # Save weights
             f.create_dataset('W' + str(l), data=self.parameters['W' + str(l)])
             f.create_dataset('b' + str(l), data=self.parameters['b' + str(l)])
-            # Save activation functions
-            f.attrs['activation_function' + str(l)] = self.activations[l-1]
             # Save grads
             f.create_dataset('grads_W' + str(l), data=self.grads['dW' + str(l)])
             f.create_dataset('grads_b' + str(l), data=self.grads['db' + str(l)])
+        # Save activation functions
+        f.create_dataset('activations', data=self.activations)
+        # Save layers
+        f.create_dataset('layers', data=self.layers)
         f.close()
 
     def load(self, filename):
@@ -212,10 +228,12 @@ class NeuralNetwork:
             filename: A string containing the path to the file
         """
         f = h5py.File(f'{filename}.hdf5', 'r')
+        self.activations = f['activations'][()]
+        self.activations = [activation.decode('utf-8') for activation in self.activations]
+        self.layers = f['layers'][()]
         for l in range(1, len(self.layers)):
             self.parameters['W' + str(l)] = f['W' + str(l)][()]
             self.parameters['b' + str(l)] = f['b' + str(l)][()]
-            self.activations[l-1] = f.attrs['activation_function' + str(l)]
             self.grads['dW' + str(l)] = f['grads_W' + str(l)][()]
             self.grads['db' + str(l)] = f['grads_b' + str(l)][()]
         f.close()
