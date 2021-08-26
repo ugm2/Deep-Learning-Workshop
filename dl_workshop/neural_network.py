@@ -4,7 +4,7 @@ from pathlib import Path
 
 class NeuralNetwork:
 
-    def __init__(self, layers_dict=None, learning_rate=0.01, verbose=False):
+    def __init__(self, layers_dict=None, learning_rate=0.01, verbose=False, verbose_iteration=100):
         """
         Initializes the NeuralNetwork class
 
@@ -15,6 +15,7 @@ class NeuralNetwork:
         """
         self.learning_rate = learning_rate
         self.verbose = verbose
+        self.verbose_iteration = verbose_iteration
         if layers_dict is not None:
             self.layers = np.array(layers_dict['layers'])
             self.activations = layers_dict['activations']
@@ -23,17 +24,18 @@ class NeuralNetwork:
             self.activations = []
 
         # Initialize activation functions
-        self._initialize_activation_functions()
+        self._initialize_activation_cost_functions()
 
         # Initialize parameters
         self._initialize_parameters()
 
-    def _initialize_activation_functions(self):
+    def _initialize_activation_cost_functions(self):
         """
         Initializes the activation functions
         """
         self.activation_functions = {}
         self.backward_activation_functions = {}
+        self.cost_functions = {}
         # Sigmoid
         sigmoid = lambda x: 1 / (1 + np.exp(-x))
         self.activation_functions['sigmoid'] = sigmoid
@@ -41,7 +43,15 @@ class NeuralNetwork:
         # ReLU
         self.activation_functions['relu'] = lambda x: np.maximum(0, x)
         self.backward_activation_functions['relu'] = lambda dA, Z: np.where(Z <= 0, 0, dA)
-        # TODO: Add more activation functions
+        # Softmax
+        softmax = lambda x: np.exp(x) / np.sum(np.exp(x), axis=0, keepdims=True)
+        self.activation_functions['softmax'] = softmax
+        self.backward_activation_functions['softmax'] = lambda dA, Z: dA * softmax(Z)
+
+        # Sigmoid cost function
+        self.cost_functions['sigmoid'] = lambda Y, A: -np.sum(np.multiply(Y, np.log(A)) + np.multiply((1 - Y), np.log(1 - A))) / Y.shape[1]
+        # Softmax cost function
+        self.cost_functions['softmax'] = lambda Y, A: -np.sum(np.multiply(Y, np.log(A))) / Y.shape[1]
 
         # Validate activations
         for activation in self.activations:
@@ -92,9 +102,7 @@ class NeuralNetwork:
         Returns:
             cost: A float value containing the cost
         """
-        # TODO: Generalize and add more cost functions
-        cost = - (np.dot(Y, np.log(A).T) + np.dot((1 - Y), np.log(1 - A).T)) / Y.shape[1]
-        cost = np.squeeze(cost) 
+        cost = self.cost_functions[self.activations[-1]](Y, A)
         return cost
 
     def _backward(self, A, Y):
@@ -107,7 +115,6 @@ class NeuralNetwork:
         Returns:
             dA: A numpy.ndarray with shape (nx, m) that contains the gradients of the cost with respect to A
         """
-        # TODO: Generalize for more cost functions and its derivatives
 
         # Initialize gradient dA
         dA = -(np.divide(Y, A) - np.divide(1 - Y, 1 - A))
@@ -148,7 +155,7 @@ class NeuralNetwork:
             cost = self._cost(Y, A)
             self._backward(A, Y)
             self._update_parameters()
-            if self.verbose and i % 100 == 0:
+            if self.verbose and i % self.verbose_iteration == 0:
                 print('Iteration {}: Cost = {}'.format(i, cost))
 
         # Print accuracy if verbose
@@ -166,9 +173,15 @@ class NeuralNetwork:
         Returns:
             Y_prediction: A numpy.ndarray with shape (1, m) that contains the predictions
         """
-
         Y_prediction = self._forward(X)
-        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+
+        # If softmax, get the most likely class
+        if self.activations[-1] == 'softmax':
+            Y_prediction = np.argmax(Y_prediction, axis=0)
+        # If sigmoid, get the sigmoid output
+        else:
+            Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+
         return Y_prediction
 
     def evaluate(self, X, Y):
@@ -181,14 +194,19 @@ class NeuralNetwork:
         Returns:
             accuracy: A float value containing the accuracy of the model's predictions
         """
-        # Predict and apply threshold 0.5
+        # Predict labels
         Y_prediction = self.predict(X)
-        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+
+        # If sofmax, get argmax of Y
+        if self.activations[-1] == 'softmax':
+            _Y = np.argmax(Y, axis=0)
+        else:
+            _Y = Y
         
         # Obtain accuracy, precision, recall, and F1 score
-        accuracy = np.sum(Y_prediction == Y) / Y.shape[1]
-        precision = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
-        recall = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        accuracy = np.sum(Y_prediction == _Y) / Y.shape[1]
+        precision = np.sum(np.logical_and(Y_prediction == _Y, _Y == 1)) / np.sum(_Y == 1)
+        recall = np.sum(np.logical_and(Y_prediction == _Y, _Y == 1)) / np.sum(_Y == 1)
         f1 = 2 * precision * recall / (precision + recall)
         
         # Return as a dictionary
