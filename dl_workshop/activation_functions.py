@@ -40,6 +40,28 @@ def relu(x, deriv=False):
     # ReLU
     return np.maximum( 0, x )
 
+def leaky_relu(x, deriv=False, leakage=0.01):
+    """
+    Leaky ReLU activation function
+    """
+    # Partial derivative of Leaky ReLU
+    if deriv:
+        return np.clip(x > 0, leakage, 1.0)
+
+    # Leaky ReLU
+    return np.maximum(leakage * x, x)
+
+def leaky_relu_custom(x, deriv=False, leakage=0.01):
+    """
+    Leaky ReLU activation function
+    """
+    # Partial derivative of ReLU (works best in some cases)
+    if deriv:
+        return (x > 0).astype(float)
+
+    # Leaky ReLU
+    return np.maximum(leakage * x, x)
+
 def softmax(x, deriv=False):
     """
     Softmax activation function
