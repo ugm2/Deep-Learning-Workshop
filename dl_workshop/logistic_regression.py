@@ -3,9 +3,8 @@ import numpy as np
 
 class LogisticRegression:
 
-    def __init__(self, learning_rate=0.01, num_iter=100000, verbose=False):
+    def __init__(self, learning_rate=0.01, verbose=False):
         self.learning_rate = learning_rate
-        self.num_iter = num_iter
         self.verbose = verbose
         self.w, self.b = None, None
         self.grads, self.costs = None, None
@@ -45,12 +44,12 @@ class LogisticRegression:
 
         return grads, cost
 
-    def optimize(self, X, Y):
+    def optimize(self, X, Y, epochs):
         """
         Optimize the weights and bias by running a gradient descent algorithm
         """
         costs = []
-        for i in range(self.num_iter):
+        for i in range(epochs):
             grads, cost = self.propagate(X, Y)
             dw = grads["dw"]
             db = grads["db"]
@@ -69,7 +68,7 @@ class LogisticRegression:
 
         return grads, costs
 
-    def fit(self, X, Y, validation_data=None):
+    def fit(self, X, Y, epochs=1, validation_data=None):
         """
         Fit the model given data
         """
@@ -77,7 +76,7 @@ class LogisticRegression:
         if self.w is None or self.b is None:
             self.w, self.b = self.init_params(X.shape[0])
         # Optimize weights and bias
-        self.grads, self.costs = self.optimize(X, Y)
+        self.grads, self.costs = self.optimize(X, Y, epochs)
         # Predict the labels
         Y_prediction_train = self.predict(X)
         if validation_data is not None:
@@ -102,12 +101,31 @@ class LogisticRegression:
 
         return Y_prediction
 
-    def score(self, X, Y):
+    def evaluate(self, X, Y):
         """
-        Returns the mean accuracy on the given test data and labels
+        Evaluates the model's predictions
+
+        Args:
+            X: A numpy.ndarray with shape (nx, m) that contains the input data
+            Y: A numpy.ndarray with shape (1, m) that contains the training labels
+        Returns:
+            accuracy: A float value containing the accuracy of the model's predictions
         """
+        # Predict and apply threshold 0.5
         Y_prediction = self.predict(X)
-        return round(1 - np.mean(np.abs(Y_prediction - Y)), 2)
+        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+        
+        # Obtain accuracy, precision, recall, and F1 score
+        accuracy = np.sum(Y_prediction == Y) / Y.shape[1]
+        precision = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        recall = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
+        f1 = 2 * precision * recall / (precision + recall)
+        
+        # Return as a dictionary
+        return {'accuracy': round(accuracy, 2),
+                'precision': round(precision, 2),
+                'recall': round(recall, 2),
+                'f1': round(f1, 2)}
 
     def save(self, path):
         """

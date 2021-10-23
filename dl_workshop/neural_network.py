@@ -1,62 +1,57 @@
 import numpy as np
-from copy import deepcopy
-
-def relu_backward(dA, cache):
-    """
-    Implement the backward propagation for a single RELU unit.
-    Arguments:
-    dA -- post-activation gradient, of any shape
-    cache -- 'Z' where we store for computing backward propagation efficiently
-    Returns:
-    dZ -- Gradient of the cost with respect to Z
-    """
-    
-    Z = cache
-    dZ = np.array(dA, copy=True) # just converting dz to a correct object.
-    
-    # When z <= 0, you should set dz to 0 as well. 
-    dZ[Z <= 0] = 0
-    
-    assert (dZ.shape == Z.shape)
-    
-    return dZ
-
+import h5py
+from pathlib import Path
 
 class NeuralNetwork:
 
-    def __init__(self, layers_dict, learning_rate=0.01, num_iterations=10000, verbose=False):
+    def __init__(self, layers_dict=None, learning_rate=0.01, verbose=False, verbose_iteration=100):
         """
         Initializes the NeuralNetwork class
 
         Args:
             layers_dict: A dictionary containing the number of nodes in each layer and its activations
+            learning_rate: A float value that specifies the learning rate
+            verbose: A boolean value that specifies whether to print the cost every 100 iterations
         """
         self.learning_rate = learning_rate
-        self.num_iterations = num_iterations
         self.verbose = verbose
-        self.layers = layers_dict['layers']
-        self.activations = layers_dict['activations']
+        self.verbose_iteration = verbose_iteration
+        if layers_dict is not None:
+            self.layers = np.array(layers_dict['layers'])
+            self.activations = layers_dict['activations']
+        else:
+            self.layers = []
+            self.activations = []
 
         # Initialize activation functions
-        self._initialize_activation_functions()
+        self._initialize_activation_cost_functions()
 
         # Initialize parameters
         self._initialize_parameters()
 
-    def _initialize_activation_functions(self):
+    def _initialize_activation_cost_functions(self):
         """
         Initializes the activation functions
         """
         self.activation_functions = {}
         self.backward_activation_functions = {}
+        self.cost_functions = {}
         # Sigmoid
         sigmoid = lambda x: 1 / (1 + np.exp(-x))
         self.activation_functions['sigmoid'] = sigmoid
         self.backward_activation_functions['sigmoid'] = lambda dA, Z: dA * (sigmoid(Z) * (1 - sigmoid(Z)))
         # ReLU
         self.activation_functions['relu'] = lambda x: np.maximum(0, x)
-        self.backward_activation_functions['relu'] = lambda _, Z: np.where(Z > 0, 1, 0)
-        # TODO: Add more activation functions
+        self.backward_activation_functions['relu'] = lambda dA, Z: np.where(Z <= 0, 0, dA)
+        # Softmax
+        softmax = lambda x: np.exp(x) / np.sum(np.exp(x), axis=0, keepdims=True)
+        self.activation_functions['softmax'] = softmax
+        self.backward_activation_functions['softmax'] = lambda dA, Z: dA * softmax(Z)
+
+        # Sigmoid cost function
+        self.cost_functions['sigmoid'] = lambda Y, A: -np.sum(np.multiply(Y, np.log(A)) + np.multiply((1 - Y), np.log(1 - A))) / Y.shape[1]
+        # Softmax cost function
+        self.cost_functions['softmax'] = lambda Y, A: -np.sum(np.multiply(Y, np.log(A))) / Y.shape[1]
 
         # Validate activations
         for activation in self.activations:
@@ -72,7 +67,7 @@ class NeuralNetwork:
         L = len(self.layers)
 
         for l in range(1, L):
-            self.parameters['W' + str(l)] = np.random.randn(self.layers[l], self.layers[l-1]) * 0.01
+            self.parameters['W' + str(l)] = np.random.randn(self.layers[l], self.layers[l-1]) / np.sqrt(self.layers[l-1])
             self.parameters['b' + str(l)] = np.zeros((self.layers[l], 1))
 
     def _forward(self, X):
@@ -107,9 +102,7 @@ class NeuralNetwork:
         Returns:
             cost: A float value containing the cost
         """
-        # TODO: Generalize and add more cost functions
-        cost = - (np.dot(Y, np.log(A).T) + np.dot((1 - Y), np.log(1 - A).T)) / Y.shape[1]
-        cost = np.squeeze(cost) 
+        cost = self.cost_functions[self.activations[-1]](Y, A)
         return cost
 
     def _backward(self, A, Y):
@@ -122,7 +115,6 @@ class NeuralNetwork:
         Returns:
             dA: A numpy.ndarray with shape (nx, m) that contains the gradients of the cost with respect to A
         """
-        # TODO: Generalize for more cost functions and its derivatives
 
         # Initialize gradient dA
         dA = -(np.divide(Y, A) - np.divide(1 - Y, 1 - A))
@@ -149,7 +141,7 @@ class NeuralNetwork:
             self.parameters['W' + str(l)] = self.parameters['W' + str(l)] - self.learning_rate * self.grads['dW' + str(l)]
             self.parameters['b' + str(l)] = self.parameters['b' + str(l)] - self.learning_rate * self.grads['db' + str(l)]
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, epochs=1, validation_data=None):
         """
         Trains the model
 
@@ -158,18 +150,19 @@ class NeuralNetwork:
             Y: A numpy.ndarray with shape (1, m) that contains the training labels
         """
         
-        for i in range(self.num_iterations):
+        for i in range(epochs):
             A = self._forward(X)
             cost = self._cost(Y, A)
             self._backward(A, Y)
             self._update_parameters()
-            if self.verbose and i % 100 == 0:
+            if self.verbose and i % self.verbose_iteration == 0:
                 print('Iteration {}: Cost = {}'.format(i, cost))
-
 
         # Print accuracy if verbose
         if self.verbose:
-            print('Train accuracy: {}'.format(self.evaluate(X, Y)))
+            print('Train accuracy: {}'.format(self.evaluate(X, Y)['accuracy']))
+            if validation_data:
+                print('Validation accuracy: {}'.format(self.evaluate(validation_data[0], validation_data[1])['accuracy']))
 
     def predict(self, X):
         """
@@ -180,9 +173,15 @@ class NeuralNetwork:
         Returns:
             Y_prediction: A numpy.ndarray with shape (1, m) that contains the predictions
         """
-
         Y_prediction = self._forward(X)
-        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+
+        # If softmax, get the most likely class
+        if self.activations[-1] == 'softmax':
+            Y_prediction = np.argmax(Y_prediction, axis=0)
+        # If sigmoid, get the sigmoid output
+        else:
+            Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
+
         return Y_prediction
 
     def evaluate(self, X, Y):
@@ -195,9 +194,64 @@ class NeuralNetwork:
         Returns:
             accuracy: A float value containing the accuracy of the model's predictions
         """
+        # Predict labels
         Y_prediction = self.predict(X)
-        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
-        return np.sum(Y_prediction == Y) / Y.shape[1]
 
-    # TODO: Save, Load
+        # If sofmax, get argmax of Y
+        if self.activations[-1] == 'softmax':
+            _Y = np.argmax(Y, axis=0)
+        else:
+            _Y = Y
+        
+        # Obtain accuracy, precision, recall, and F1 score
+        accuracy = np.sum(Y_prediction == _Y) / Y.shape[1]
+        precision = np.sum(np.logical_and(Y_prediction == _Y, _Y == 1)) / np.sum(_Y == 1)
+        recall = np.sum(np.logical_and(Y_prediction == _Y, _Y == 1)) / np.sum(_Y == 1)
+        f1 = 2 * precision * recall / (precision + recall)
+        
+        # Return as a dictionary
+        return {'accuracy': round(accuracy, 2),
+                'precision': round(precision, 2),
+                'recall': round(recall, 2),
+                'f1': round(f1, 2)}
 
+    def save(self, filename):
+        """
+        Saves the model to a file
+
+        Args:
+            filename: A string containing the path to the file
+        """
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
+        filename = filename + '.hdf5'
+        f = h5py.File(filename, 'w')
+        for l in range(1, len(self.layers)):
+            # Save weights
+            f.create_dataset('W' + str(l), data=self.parameters['W' + str(l)])
+            f.create_dataset('b' + str(l), data=self.parameters['b' + str(l)])
+            # Save grads
+            f.create_dataset('grads_W' + str(l), data=self.grads['dW' + str(l)])
+            f.create_dataset('grads_b' + str(l), data=self.grads['db' + str(l)])
+        # Save activation functions
+        f.create_dataset('activations', data=self.activations)
+        # Save layers
+        f.create_dataset('layers', data=self.layers)
+        f.close()
+
+    def load(self, filename):
+        """
+        Loads the model from a file
+
+        Args:
+            filename: A string containing the path to the file
+        """
+        f = h5py.File(f'{filename}.hdf5', 'r')
+        self.activations = f['activations'][()]
+        self.activations = [activation.decode('utf-8') for activation in self.activations]
+        self.layers = f['layers'][()]
+        for l in range(1, len(self.layers)):
+            self.parameters['W' + str(l)] = f['W' + str(l)][()]
+            self.parameters['b' + str(l)] = f['b' + str(l)][()]
+            self.grads['dW' + str(l)] = f['grads_W' + str(l)][()]
+            self.grads['db' + str(l)] = f['grads_b' + str(l)][()]
+        f.close()

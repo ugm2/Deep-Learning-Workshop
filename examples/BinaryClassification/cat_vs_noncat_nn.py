@@ -1,7 +1,6 @@
-from NeuralNetwork.nn_coursera import L_layer_model, predict
 import numpy as np
 import h5py
-from NeuralNetwork.neural_network import NeuralNetwork
+from dl_workshop.neural_network import NeuralNetwork
 
 np.random.seed(1)
 
@@ -47,18 +46,25 @@ test_x = test_x_flatten/255.
 print ("train_x's shape: " + str(train_x.shape))
 print ("test_x's shape: " + str(test_x.shape))
 
-# nn_model = NeuralNetwork(
-#     layers_dict={
-#         'layers': [train_x.shape[0], 20, 7, 5, 1],
-#         'activations': ['relu', 'relu', 'relu', 'sigmoid']
-#     },
-#     learning_rate=0.0075,
-#     num_iterations=1000,
-#     verbose=True
-# )
-# nn_model.fit(train_x, train_y)
+nn_model = NeuralNetwork(
+    layers_dict={
+        'layers': [train_x.shape[0], 20, 7, 5, 1],
+        'activations': ['relu', 'relu', 'relu', 'sigmoid']
+    },
+    learning_rate=0.0075,
+    verbose=False
+)
+nn_model.fit(train_x, train_y, epochs=200, validation_data=(test_x, test_y))
 
-layers_dims = [12288, 20, 7, 5, 1] #  4-layer model
-parameters, costs = L_layer_model(train_x, train_y, layers_dims, num_iterations = 2500, print_cost = True)
+nn_model.save('models/cat_vs_noncat')
 
-# pred_train = predict(train_x, train_y, parameters)
+nn_model_2 = NeuralNetwork(learning_rate=0.0075, verbose=False)
+nn_model_2.load('models/cat_vs_noncat')
+
+nn_model_2.fit(train_x, train_y, epochs=2000, validation_data=(test_x, test_y))
+
+# Evaluate model with more metrics
+print("Training data:")
+print(nn_model_2.evaluate(train_x, train_y))
+print("Validation data:")
+print(nn_model_2.evaluate(test_x, test_y))
