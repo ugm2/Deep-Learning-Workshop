@@ -44,9 +44,9 @@ lr_model.fit(X_train, y_train_shaped, epochs=1000, validation_data=(X_val, y_val
 
 # Get scores
 print("Evaluate on training data:")
-print(lr_model.score(X_train, y_train_shaped))
+print(lr_model.evaluate(X_train, y_train_shaped))
 print("Evaluate on validation data:")
-print(lr_model.score(X_val, y_val_shaped))
+print(lr_model.evaluate(X_val, y_val_shaped))
 
 # Save model
 lr_model.save('models/titanic_model.npy')

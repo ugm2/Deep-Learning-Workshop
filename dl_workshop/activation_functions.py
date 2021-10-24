@@ -68,11 +68,7 @@ def softmax(x, deriv=False):
     """
 
     # Softmax
-    e_x = np.exp(x - np.max(x, axis=1, keepdims = True))
-    x = e_x / np.sum(e_x, axis = 1, keepdims = True)
-
-    # Partial derivative of softmax
-    if deriv:
-        return np.ones(x.shape)
+    e_x = np.exp(x - np.max(x))
+    x = e_x / np.sum(e_x, axis=0, keepdims=True)
 
     return x
