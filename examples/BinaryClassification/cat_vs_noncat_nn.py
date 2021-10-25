@@ -1,6 +1,8 @@
 import numpy as np
 import h5py
 from dl_workshop.neural_network import NeuralNetwork
+from dl_workshop.activation_functions import leaky_relu_custom, sigmoid
+from dl_workshop.cost_functions import binary_crossentropy
 
 np.random.seed(1)
 
@@ -47,19 +49,17 @@ print ("train_x's shape: " + str(train_x.shape))
 print ("test_x's shape: " + str(test_x.shape))
 
 nn_model = NeuralNetwork(
-    layers_dict={
-        'layers': [train_x.shape[0], 20, 7, 5, 1],
-        'activations': ['relu', 'relu', 'relu', 'sigmoid']
-    },
+    n_inputs=train_x.shape[0],
+    layers=[(20, leaky_relu_custom), (7, leaky_relu_custom), (5, leaky_relu_custom), (1, sigmoid)],
     learning_rate=0.0075,
+    cost_function=binary_crossentropy,
     verbose=False
 )
 nn_model.fit(train_x, train_y, epochs=200, validation_data=(test_x, test_y))
 
 nn_model.save('models/cat_vs_noncat')
 
-nn_model_2 = NeuralNetwork(learning_rate=0.0075, verbose=False)
-nn_model_2.load('models/cat_vs_noncat')
+nn_model_2 = NeuralNetwork.load('models/cat_vs_noncat')
 
 nn_model_2.fit(train_x, train_y, epochs=2000, validation_data=(test_x, test_y))
 

@@ -1,4 +1,6 @@
 import numpy as np
+from dl_workshop.activation_functions import sigmoid
+from dl_workshop.cost_functions import binary_crossentropy
 
 
 class LogisticRegression:
@@ -17,12 +19,6 @@ class LogisticRegression:
         b = 0.0
         return w, b
 
-    def sigmoid(self, z):
-        """
-        Compute the sigmoid of z
-        """
-        return 1 / (1 + np.exp(-z))
-
     def propagate(self, X, Y):
         """
         Implement the cost function and its gradient
@@ -30,8 +26,8 @@ class LogisticRegression:
         m = X.shape[1]
 
         # Forward propagation
-        A = self.sigmoid(np.dot(self.w.T, X) + self.b)
-        cost = - np.sum(Y * np.log(A) + (1-Y) * np.log(1-A)) / m
+        A = sigmoid(np.dot(self.w.T, X) + self.b)
+        cost = binary_crossentropy(Y, A)
 
         # Backward propagation
         dw = np.dot(X, (A-Y).T) / m
@@ -95,7 +91,7 @@ class LogisticRegression:
         w = self.w.reshape(X.shape[0], 1)
 
         # Compute vector "A" predicting the probabilities of the input X being of either class
-        A = self.sigmoid(np.dot(w.T, X) + self.b)
+        A = sigmoid(np.dot(w.T, X) + self.b)
 
         Y_prediction = A > np.full(A.shape, 0.5)
 

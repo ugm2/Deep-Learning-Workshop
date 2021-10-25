@@ -1,5 +1,7 @@
 from sklearn.model_selection import train_test_split
 from dl_workshop.neural_network import NeuralNetwork
+from dl_workshop.activation_functions import relu, sigmoid
+from dl_workshop.cost_functions import binary_crossentropy
 import pandas as pd
 import numpy as np
 np.random.seed(1)
@@ -40,14 +42,15 @@ y_val = y_val.values.reshape(1, y_val.shape[0])
 X_test = X_test.values.T
 
 nn_model = NeuralNetwork(
-    layers_dict={
-        'layers': [X_train.shape[0], 20, 20, 15, 7, 5, 1],
-        'activations': ['relu', 'relu', 'relu', 'relu', 'relu', 'sigmoid']
-    },
+    n_inputs=X_train.shape[0],
+    layers=[
+        (20, relu), (7, relu), (5, relu), (1, sigmoid)
+    ],
+    cost_function=binary_crossentropy,
     learning_rate=0.0075,
     verbose=False
 )
-nn_model.fit(X_train, y_train, epochs=15000, validation_data=(X_val, y_val))
+nn_model.fit(X_train, y_train, epochs=25000, validation_data=(X_val, y_val))
 
 # Evaluate model with more metrics
 print("Evaluate on training data:")

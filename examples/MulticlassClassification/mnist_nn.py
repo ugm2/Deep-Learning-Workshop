@@ -1,5 +1,7 @@
 from tensorflow import keras
 from dl_workshop.neural_network import NeuralNetwork
+from dl_workshop.activation_functions import relu, softmax
+from dl_workshop.cost_functions import categorical_crossentropy
 from tensorflow.keras.utils import to_categorical
 import numpy as np
 
@@ -44,10 +46,11 @@ print("y_train's shape: " + str(y_train.shape))
 print("y_test's shape: " + str(y_test.shape))
 
 nn_model = NeuralNetwork(
-    layers_dict={
-        'layers': [x_train.shape[0], 128, 64, 32, y_train.shape[0]],
-        'activations': ['relu', 'relu', 'relu', 'softmax']
-    },
+    n_inputs=x_train.shape[0],
+    layers=[
+        (128, relu), (64, relu), (32, relu), (y_train.shape[0], softmax)
+    ],
+    cost_function=categorical_crossentropy,
     learning_rate=0.05,
     verbose=True,
     verbose_iteration=10
