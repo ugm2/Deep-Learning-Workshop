@@ -9,8 +9,10 @@ import sys
 import logging
 
 from tests.activation_functions_unittests import ActivationFunctionTests
+from tests.cost_functions_unittests import CostFunctionTests
 
 assert ActivationFunctionTests
+assert CostFunctionTests
 
 sys.path.append(os.getcwd())
 

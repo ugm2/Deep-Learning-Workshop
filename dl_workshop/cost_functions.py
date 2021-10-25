@@ -22,5 +22,4 @@ def categorical_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
 
     if deriv:
         return (y_pred - y_true) / divisor
-    else:
-        return -np.sum(np.multiply(y_true, np.log(y_pred))) / y_true.shape[1]
+    return -np.sum(np.multiply(y_true, np.log(outputs))) / y_true.shape[1]
