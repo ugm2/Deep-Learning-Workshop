@@ -130,7 +130,5 @@ dmypy.json
 
 *models/
 
-*.h5
-
 # Vscode
 .vscode/
