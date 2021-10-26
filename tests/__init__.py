@@ -10,12 +10,14 @@ import logging
 
 from tests.activation_functions_unittests import ActivationFunctionTests
 from tests.cost_functions_unittests import CostFunctionTests
-from tests.logistic_regression_unittests import LogisticRegressionUnitTests, LogisticRegressionIntegrationTests
+from tests.logistic_regression_tests import LogisticRegressionUnitTests, LogisticRegressionIntegrationTests
+from tests.neural_network_tests import NeuralNetworkUnitTests
 
 assert ActivationFunctionTests
 assert CostFunctionTests
 assert LogisticRegressionUnitTests
 assert LogisticRegressionIntegrationTests
+assert NeuralNetworkUnitTests
 
 sys.path.append(os.getcwd())
 

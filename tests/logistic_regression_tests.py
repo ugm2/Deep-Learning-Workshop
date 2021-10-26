@@ -16,7 +16,7 @@ from dl_workshop.logistic_regression import LogisticRegression
 from tests.utils import _log_test_title
 
 logging.basicConfig(level=os.getenv("LOGGER_LEVEL", logging.WARNING))
-logger = logging.getLogger("Logistic Regression unittest")
+logger = logging.getLogger("Logistic Regression tests")
 
 class LogisticRegressionUnitTests(unittest.TestCase):
     '''
@@ -190,20 +190,20 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         _log_test_title("Test the evaluation of Logistic Regression", logger)
 
         # Mock the predict method
-        mock_predict.return_value = np.array([[0, 0]])
+        mock_predict.return_value = np.array([[0, 0, 1]])
 
         lr = LogisticRegression(0.01, True)
-        X = np.array([[1, 2], [3, 4]])
-        y = np.array([[1, 0]])
+        X = np.array([[1, 2], [3, 4], [5, 6]])
+        y = np.array([[1, 0, 1]])
         metrics = lr.evaluate(X, y)
         accuracy = metrics["accuracy"]
-        self.assertEqual(accuracy, 0.5)
+        self.assertEqual(accuracy, 0.67)
         precision = metrics["precision"]
-        self.assertEqual(precision, 0.25)
+        self.assertEqual(precision, 0.75)
         recall = metrics["recall"]
-        self.assertEqual(recall, 0.5)
+        self.assertEqual(recall, 0.75)
         f1 = metrics["f1"]
-        self.assertEqual(f1, 0.33)
+        self.assertEqual(f1, 0.67)
 
     def test_save(self):
         '''
@@ -305,6 +305,7 @@ class LogisticRegressionIntegrationTests(unittest.TestCase):
         train_x = train_x_flatten/255.
         test_x = test_x_flatten/255.
 
+        # Train Logistic Regression
         lr_model = LogisticRegression(learning_rate=0.0075, verbose=False)
         lr_model.fit(train_x, train_y, epochs=400, validation_data=(test_x, test_y))
 

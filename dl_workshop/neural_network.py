@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 class NeuralNetwork:
 
     def __init__(self,
-                 n_inputs,
+                 input_size,
                  layers,
                  cost_function,
                  learning_rate=0.01,
@@ -16,7 +16,7 @@ class NeuralNetwork:
         Initializes the NeuralNetwork class
 
         Args:
-            n_inputs: The number of inputs
+            input_size: The number of inputs
             layers: A list of tuples of integers that represent the number
                     of nodes in each layer and activation function
             cost_function: The cost function to use
@@ -28,7 +28,7 @@ class NeuralNetwork:
         self.verbose = verbose
         self.verbose_iteration = verbose_iteration
         self.layers = layers
-        self.n_inputs = n_inputs
+        self.input_size = input_size
         self.cost_function = cost_function
 
         # Initialize parameters
@@ -40,7 +40,7 @@ class NeuralNetwork:
         """
         self.grads = {}
         self.parameters = {}
-        layers = [(self.n_inputs, None)] + self.layers
+        layers = [(self.input_size, None)] + self.layers
 
         for l in range(1, len(layers)):
             self.parameters['W' + str(l)] = np.random.randn(layers[l][0],

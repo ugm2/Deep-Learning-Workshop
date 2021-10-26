@@ -49,7 +49,7 @@ print ("train_x's shape: " + str(train_x.shape))
 print ("test_x's shape: " + str(test_x.shape))
 
 nn_model = NeuralNetwork(
-    n_inputs=train_x.shape[0],
+    input_size=train_x.shape[0],
     layers=[(20, leaky_relu_custom), (7, leaky_relu_custom), (5, leaky_relu_custom), (1, sigmoid)],
     learning_rate=0.0075,
     cost_function=binary_crossentropy,

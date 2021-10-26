@@ -46,7 +46,7 @@ y_val = y_val.values.reshape(1, y_val.shape[0])
 X_test = X_test.values.T
 
 nn_model = NeuralNetwork(
-    n_inputs=X_train.shape[0],
+    input_size=X_train.shape[0],
     layers=[
         (20, relu), (7, relu), (5, relu), (1, sigmoid)
     ],
