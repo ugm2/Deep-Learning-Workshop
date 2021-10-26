@@ -46,7 +46,7 @@ print("y_train's shape: " + str(y_train.shape))
 print("y_test's shape: " + str(y_test.shape))
 
 nn_model = NeuralNetwork(
-    n_inputs=x_train.shape[0],
+    input_size=x_train.shape[0],
     layers=[
         (128, relu), (64, relu), (32, relu), (y_train.shape[0], softmax)
     ],

@@ -103,7 +103,9 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         # Mock the init_params method
         init_params_mock.return_value = (np.zeros((2, 1)), 0.0)
         # Mock the propagate method
-        mock_propagate.return_value = ({'dw': np.array([[0.25], [0.25]]), 'db': 0.0}, 0.6931471805599453)
+        mock_propagate.return_value = (
+            {'dw': np.array([[0.25], [0.25]]), 'db': 0.0}, 0.6931471805599453
+        )
 
         lr = LogisticRegression(0.01, False)
         w, b = lr.init_params(dim=2)
@@ -161,7 +163,9 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         # Mock the init_params method
         init_params_mock.return_value = (np.zeros((2, 1)), 0.0)
         # Mock the optimize method
-        mock_optimize.return_value = ({'dw': np.array([[0.25], [0.25]]), 'db': 0.0}, [0.6931471805599453])
+        mock_optimize.return_value = (
+            {'dw': np.array([[0.25], [0.25]]), 'db': 0.0}, [0.6931471805599453]
+        )
         # Mock the predict method
         mock_predict.return_value = np.array([[0, 0]])
 
@@ -223,14 +227,14 @@ class LogisticRegressionUnitTests(unittest.TestCase):
 
         # Check file content by loading pickle
         with open("test_save.pkl", 'rb') as file:
-            lr = pickle.load(file)
-        self.assertEqual(lr.w.shape, (2, 1))
-        assert np.allclose(lr.w, np.array([[0.25], [0.25]]))
-        self.assertEqual(lr.b, 0.0)
-        self.assertEqual(lr.grads["dw"].shape, (2, 1))
-        assert np.allclose(lr.grads["dw"], np.array([[0.25], [0.25]]))
-        self.assertEqual(lr.grads["db"], 0.0)
-        self.assertEqual(lr.costs[0], 0.6931471805599453)
+            saved_lr = pickle.load(file)
+        self.assertEqual(saved_lr.w.shape, (2, 1))
+        assert np.allclose(saved_lr.w, np.array([[0.25], [0.25]]))
+        self.assertEqual(saved_lr.b, 0.0)
+        self.assertEqual(saved_lr.grads["dw"].shape, (2, 1))
+        assert np.allclose(saved_lr.grads["dw"], np.array([[0.25], [0.25]]))
+        self.assertEqual(saved_lr.grads["db"], 0.0)
+        self.assertEqual(saved_lr.costs[0], 0.6931471805599453)
 
         # Remove file
         os.remove("test_save.pkl")
@@ -254,14 +258,14 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("test_load.pkl"))
 
         # Check file content by loading pickle
-        lr = LogisticRegression.load("test_load")
-        self.assertEqual(lr.w.shape, (2, 1))
-        assert np.allclose(lr.w, np.array([[0.25], [0.25]]))
-        self.assertEqual(lr.b, 0.0)
-        self.assertEqual(lr.grads["dw"].shape, (2, 1))
-        assert np.allclose(lr.grads["dw"], np.array([[0.25], [0.25]]))
-        self.assertEqual(lr.grads["db"], 0.0)
-        self.assertEqual(lr.costs[0], 0.6931471805599453)
+        saved_lr = LogisticRegression.load("test_load")
+        self.assertEqual(saved_lr.w.shape, (2, 1))
+        assert np.allclose(saved_lr.w, np.array([[0.25], [0.25]]))
+        self.assertEqual(saved_lr.b, 0.0)
+        self.assertEqual(saved_lr.grads["dw"].shape, (2, 1))
+        assert np.allclose(saved_lr.grads["dw"], np.array([[0.25], [0.25]]))
+        self.assertEqual(saved_lr.grads["db"], 0.0)
+        self.assertEqual(saved_lr.costs[0], 0.6931471805599453)
 
         # Remove file
         os.remove("test_load.pkl")

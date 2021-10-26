@@ -142,7 +142,7 @@ class NeuralNetwork:
         # If multiclass classification, return the index of the highest probability
         return np.argmax(Y_prediction, axis=0)
 
-    def evaluate(self, X, Y):
+    def evaluate(self, X, Y, zero_division=0):
         """
         Evaluates the model's predictions
 
@@ -169,9 +169,15 @@ class NeuralNetwork:
 
         # Obtain accuracy, precision, recall, and F1 score
         accuracy = accuracy_score(Y, Y_prediction)
-        precision = precision_score(Y, Y_prediction, average=average)
-        recall = recall_score(Y, Y_prediction, average=average)
-        f1 = f1_score(Y, Y_prediction, average=average)
+        precision = precision_score(Y, Y_prediction,
+                                    average=average,
+                                    zero_division=zero_division)
+        recall = recall_score(Y, Y_prediction,
+                              average=average,
+                              zero_division=zero_division)
+        f1 = f1_score(Y, Y_prediction,
+                      average=average,
+                      zero_division=zero_division)
         
         # Return as a dictionary
         return {'accuracy': round(accuracy, 2),
