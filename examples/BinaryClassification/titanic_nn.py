@@ -31,6 +31,10 @@ X_test = test
 # y_test = test['Survived']
 # X_test = test.drop(columns=['Survived'])
 
+# Normalize values
+X_train = (X_train - X_train.mean()) / X_train.std()
+X_test = (X_test - X_test.mean()) / X_test.std()
+
 # Split train into train and validation sets
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 

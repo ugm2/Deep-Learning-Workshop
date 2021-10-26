@@ -28,6 +28,10 @@ X_test = test
 # y_test = test['Survived']
 # X_test = test.drop(columns=['Survived'])
 
+# Normalize values
+X_train = (X_train - X_train.mean()) / X_train.std()
+X_test = (X_test - X_test.mean()) / X_test.std()
+
 # Split train into train and validation sets
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
@@ -49,11 +53,10 @@ print("Evaluate on validation data:")
 print(lr_model.evaluate(X_val, y_val_shaped))
 
 # Save model
-lr_model.save('models/titanic_model.npy')
+lr_model.save('models/titanic_model')
 
 # Load model from file
-lr_model = LogisticRegression(learning_rate=0.01, verbose=False)
-lr_model.load('models/titanic_model.npy')
+lr_model = LogisticRegression.load('models/titanic_model')
 
 # Train again
 lr_model.fit(X_train, y_train_shaped, epochs=8000, validation_data=(X_val, y_val_shaped))
@@ -66,7 +69,7 @@ print("Evaluate on validation data:")
 print(lr_model.evaluate(X_val, y_val_shaped))
 
 # Overwrite best model
-lr_model.save('models/titanic_model.npy')
+lr_model.save('models/titanic_model')
 
 ### THIS CODE IS FOR SUBMITTING RESULTS TO TITANIC KAGGLE COMPETITION ###
 # # Predict test set

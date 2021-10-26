@@ -1,6 +1,7 @@
 import numpy as np
 from pathlib import Path
 import pickle
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 class NeuralNetwork:
 
@@ -156,15 +157,21 @@ class NeuralNetwork:
 
         # If binary classification
         if Y.shape[0] == 1:
-            _Y = Y
+            average = 'binary'
         # If multiclass classification
         else:
-            _Y = np.argmax(Y, axis=0)
+            Y = np.argmax(Y, axis=0)
+            average = 'macro'
+
+        # Flatten both Y and Y_prediction
+        Y = Y.flatten()
+        Y_prediction = Y_prediction.flatten()
+
         # Obtain accuracy, precision, recall, and F1 score
-        accuracy = np.sum(Y_prediction == _Y) / Y.shape[1]
-        precision = np.sum(np.logical_and(Y_prediction == _Y, _Y == 1)) / np.sum(_Y == 1)
-        recall = np.sum(np.logical_and(Y_prediction == _Y, _Y == 1)) / np.sum(_Y == 1)
-        f1 = 2 * precision * recall / (precision + recall)
+        accuracy = accuracy_score(Y, Y_prediction)
+        precision = precision_score(Y, Y_prediction, average=average)
+        recall = recall_score(Y, Y_prediction, average=average)
+        f1 = f1_score(Y, Y_prediction, average=average)
         
         # Return as a dictionary
         return {'accuracy': round(accuracy, 2),
