@@ -7,7 +7,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 
 class LogisticRegression:
-
     def __init__(self, learning_rate=0.01, verbose=False):
         self.learning_rate = learning_rate
         self.verbose = verbose
@@ -33,13 +32,12 @@ class LogisticRegression:
         cost = binary_crossentropy(Y, A)
 
         # Backward propagation
-        dw = np.dot(X, (A-Y).T) / m
-        db = np.sum(A-Y) / m
+        dw = np.dot(X, (A - Y).T) / m
+        db = np.sum(A - Y) / m
 
         cost = np.squeeze(cost)
 
-        grads = {"dw": dw,
-                 "db": db}
+        grads = {"dw": dw, "db": db}
 
         return grads, cost
 
@@ -62,8 +60,7 @@ class LogisticRegression:
                 if self.verbose:
                     print("Cost after iteration %i: %f" % (i, cost))
 
-        grads = {"dw": dw,
-                 "db": db}
+        grads = {"dw": dw, "db": db}
 
         return grads, costs
 
@@ -84,9 +81,19 @@ class LogisticRegression:
             Y_prediction_validation = None
         # Print results if verbose is True
         if self.verbose:
-            print("train accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_train - Y)) * 100))
+            print(
+                "train accuracy: {} %".format(
+                    100 - np.mean(np.abs(Y_prediction_train - Y)) * 100
+                )
+            )
             if validation_data:
-                print("validation accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_validation - validation_data[1])) * 100))
+                print(
+                    "validation accuracy: {} %".format(
+                        100
+                        - np.mean(np.abs(Y_prediction_validation - validation_data[1]))
+                        * 100
+                    )
+                )
 
     def predict(self, X):
         """
@@ -113,22 +120,24 @@ class LogisticRegression:
         """
         # Predict and apply threshold 0.5
         Y_prediction = self.predict(X)
-        
+
         # Flatten both Y and Y_prediction
         Y = Y.flatten()
         Y_prediction = Y_prediction.flatten()
 
         # Obtain accuracy, precision, recall, and F1 score
         accuracy = accuracy_score(Y, Y_prediction)
-        precision = precision_score(Y, Y_prediction, average='macro')
-        recall = recall_score(Y, Y_prediction, average='macro')
-        f1 = f1_score(Y, Y_prediction, average='macro')
-        
+        precision = precision_score(Y, Y_prediction, average="macro")
+        recall = recall_score(Y, Y_prediction, average="macro")
+        f1 = f1_score(Y, Y_prediction, average="macro")
+
         # Return as a dictionary
-        return {'accuracy': round(accuracy, 2),
-                'precision': round(precision, 2),
-                'recall': round(recall, 2),
-                'f1': round(f1, 2)}
+        return {
+            "accuracy": round(accuracy, 2),
+            "precision": round(precision, 2),
+            "recall": round(recall, 2),
+            "f1": round(f1, 2),
+        }
 
     def save(self, filename):
         """
@@ -138,7 +147,7 @@ class LogisticRegression:
             filename: A string containing the path to the file
         """
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
-        with open(filename + '.pkl', 'wb') as file:
+        with open(filename + ".pkl", "wb") as file:
             pickle.dump(self, file)
 
     @staticmethod
@@ -151,5 +160,5 @@ class LogisticRegression:
         Returns:
             model: A NeuralNetwork instance
         """
-        with open(filename + '.pkl', 'rb') as file:
+        with open(filename + ".pkl", "rb") as file:
             return pickle.load(file)

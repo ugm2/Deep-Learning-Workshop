@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def sigmoid(x, deriv=False):
     """
     Sigmoid activation function
@@ -16,6 +17,7 @@ def sigmoid(x, deriv=False):
 
     return x
 
+
 def tanh(x, deriv=False):
     """
     Tanh activation function
@@ -29,6 +31,7 @@ def tanh(x, deriv=False):
 
     return x
 
+
 def relu(x, deriv=False):
     """
     ReLU activation function
@@ -38,7 +41,8 @@ def relu(x, deriv=False):
         return (x > 0).astype(float)
 
     # ReLU
-    return np.maximum( 0, x )
+    return np.maximum(0, x)
+
 
 def leaky_relu(x, deriv=False, leakage=0.01):
     """
@@ -51,6 +55,7 @@ def leaky_relu(x, deriv=False, leakage=0.01):
     # Leaky ReLU
     return np.maximum(leakage * x, x)
 
+
 def leaky_relu_custom(x, deriv=False, leakage=0.01):
     """
     Leaky ReLU activation function
@@ -61,6 +66,7 @@ def leaky_relu_custom(x, deriv=False, leakage=0.01):
 
     # Leaky ReLU
     return np.maximum(leakage * x, x)
+
 
 def softmax(x, deriv=False):
     """

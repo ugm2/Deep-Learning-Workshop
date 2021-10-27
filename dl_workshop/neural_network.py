@@ -3,15 +3,17 @@ from pathlib import Path
 import pickle
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-class NeuralNetwork:
 
-    def __init__(self,
-                 input_size,
-                 layers,
-                 cost_function,
-                 learning_rate=0.01,
-                 verbose=False,
-                 verbose_iteration=100):
+class NeuralNetwork:
+    def __init__(
+        self,
+        input_size,
+        layers,
+        cost_function,
+        learning_rate=0.01,
+        verbose=False,
+        verbose_iteration=100,
+    ):
         """
         Initializes the NeuralNetwork class
 
@@ -33,7 +35,7 @@ class NeuralNetwork:
 
         # Initialize parameters
         self._initialize_parameters()
-    
+
     def _initialize_parameters(self):
         """
         Initializes the parameters for the NeuralNetwork class
@@ -43,10 +45,10 @@ class NeuralNetwork:
         layers = [(self.input_size, None)] + self.layers
 
         for l in range(1, len(layers)):
-            self.parameters['W' + str(l)] = np.random.randn(layers[l][0],
-                                                            layers[l-1][0]) / \
-                                                                np.sqrt(layers[l-1][0])
-            self.parameters['b' + str(l)] = np.zeros((layers[l][0], 1))
+            self.parameters["W" + str(l)] = np.random.randn(
+                layers[l][0], layers[l - 1][0]
+            ) / np.sqrt(layers[l - 1][0])
+            self.parameters["b" + str(l)] = np.zeros((layers[l][0], 1))
 
     def _forward(self, X):
         """
@@ -59,11 +61,11 @@ class NeuralNetwork:
         """
         A = X
         for i, layer in enumerate(self.layers):
-            self.parameters['A' + str(i)] = A
-            W = self.parameters['W' + str(i+1)]
-            b = self.parameters['b' + str(i+1)]
+            self.parameters["A" + str(i)] = A
+            W = self.parameters["W" + str(i + 1)]
+            b = self.parameters["b" + str(i + 1)]
             Z = np.dot(W, A) + b
-            self.parameters['Z' + str(i+1)] = Z
+            self.parameters["Z" + str(i + 1)] = Z
             A = layer[1](Z)
 
         return A
@@ -85,22 +87,30 @@ class NeuralNetwork:
         L = len(self.layers)
 
         for l in reversed(range(0, L)):
-            A_prev = self.parameters['A' + str(l)]
-            W = self.parameters['W' + str(l+1)]
-            Z = self.parameters['Z' + str(l+1)]
+            A_prev = self.parameters["A" + str(l)]
+            W = self.parameters["W" + str(l + 1)]
+            Z = self.parameters["Z" + str(l + 1)]
             dZ = dA * self.layers[l][1](Z, deriv=True)
             dA = np.dot(W.T, dZ)
-            self.grads['dW' + str(l+1)] = np.dot(dZ, A_prev.T) / A_prev.shape[1]
-            self.grads['db' + str(l+1)] = np.sum(dZ, axis=1, keepdims=True) / A_prev.shape[1]
+            self.grads["dW" + str(l + 1)] = np.dot(dZ, A_prev.T) / A_prev.shape[1]
+            self.grads["db" + str(l + 1)] = (
+                np.sum(dZ, axis=1, keepdims=True) / A_prev.shape[1]
+            )
 
     def _update_parameters(self):
         """
         Updates the parameters using gradient descent
         """
         L = len(self.layers)
-        for l in range(1, L+1):
-            self.parameters['W' + str(l)] = self.parameters['W' + str(l)] - self.learning_rate * self.grads['dW' + str(l)]
-            self.parameters['b' + str(l)] = self.parameters['b' + str(l)] - self.learning_rate * self.grads['db' + str(l)]
+        for l in range(1, L + 1):
+            self.parameters["W" + str(l)] = (
+                self.parameters["W" + str(l)]
+                - self.learning_rate * self.grads["dW" + str(l)]
+            )
+            self.parameters["b" + str(l)] = (
+                self.parameters["b" + str(l)]
+                - self.learning_rate * self.grads["db" + str(l)]
+            )
 
     def fit(self, X, Y, epochs=1, validation_data=None):
         """
@@ -110,20 +120,26 @@ class NeuralNetwork:
             X: A numpy.ndarray with shape (nx, m) that contains the input data
             Y: A numpy.ndarray with shape (1, m) that contains the training labels
         """
-        
+
         for i in range(epochs):
             A = self._forward(X)
             cost = self.cost_function(Y, A)
             self._backward(A, Y)
             self._update_parameters()
             if self.verbose and i % self.verbose_iteration == 0:
-                print('Iteration {}: Cost = {}'.format(i, cost))
+                print("Iteration {}: Cost = {}".format(i, cost))
 
         # Print accuracy if verbose
         if self.verbose:
-            print('Train accuracy: {}'.format(self.evaluate(X, Y)['accuracy']))
+            print("Train accuracy: {}".format(self.evaluate(X, Y)["accuracy"]))
             if validation_data:
-                print('Validation accuracy: {}'.format(self.evaluate(validation_data[0], validation_data[1])['accuracy']))
+                print(
+                    "Validation accuracy: {}".format(
+                        self.evaluate(validation_data[0], validation_data[1])[
+                            "accuracy"
+                        ]
+                    )
+                )
 
     def predict(self, X):
         """
@@ -157,11 +173,11 @@ class NeuralNetwork:
 
         # If binary classification
         if Y.shape[0] == 1:
-            average = 'binary'
+            average = "binary"
         # If multiclass classification
         else:
             Y = np.argmax(Y, axis=0)
-            average = 'macro'
+            average = "macro"
 
         # Flatten both Y and Y_prediction
         Y = Y.flatten()
@@ -169,21 +185,21 @@ class NeuralNetwork:
 
         # Obtain accuracy, precision, recall, and F1 score
         accuracy = accuracy_score(Y, Y_prediction)
-        precision = precision_score(Y, Y_prediction,
-                                    average=average,
-                                    zero_division=zero_division)
-        recall = recall_score(Y, Y_prediction,
-                              average=average,
-                              zero_division=zero_division)
-        f1 = f1_score(Y, Y_prediction,
-                      average=average,
-                      zero_division=zero_division)
-        
+        precision = precision_score(
+            Y, Y_prediction, average=average, zero_division=zero_division
+        )
+        recall = recall_score(
+            Y, Y_prediction, average=average, zero_division=zero_division
+        )
+        f1 = f1_score(Y, Y_prediction, average=average, zero_division=zero_division)
+
         # Return as a dictionary
-        return {'accuracy': round(accuracy, 2),
-                'precision': round(precision, 2),
-                'recall': round(recall, 2),
-                'f1': round(f1, 2)}
+        return {
+            "accuracy": round(accuracy, 2),
+            "precision": round(precision, 2),
+            "recall": round(recall, 2),
+            "f1": round(f1, 2),
+        }
 
     def save(self, filename):
         """
@@ -193,9 +209,9 @@ class NeuralNetwork:
             filename: A string containing the path to the file
         """
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
-        with open(filename + '.pkl', 'wb') as file:
+        with open(filename + ".pkl", "wb") as file:
             pickle.dump(self, file)
-    
+
     @staticmethod
     def load(filename):
         """
@@ -206,5 +222,5 @@ class NeuralNetwork:
         Returns:
             model: A NeuralNetwork instance
         """
-        with open(filename + '.pkl', 'rb') as file:
+        with open(filename + ".pkl", "rb") as file:
             return pickle.load(file)

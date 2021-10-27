@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def binary_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
     """
     Binary Crossentropy
@@ -10,7 +11,14 @@ def binary_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
 
     if deriv:
         return (y_pred - y_true) / divisor
-    return -np.sum(np.multiply(y_true, np.log(outputs)) + np.multiply((1 - y_true), np.log(1 - outputs))) / y_true.shape[1]
+    return (
+        -np.sum(
+            np.multiply(y_true, np.log(outputs))
+            + np.multiply((1 - y_true), np.log(1 - outputs))
+        )
+        / y_true.shape[1]
+    )
+
 
 def categorical_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
     """
