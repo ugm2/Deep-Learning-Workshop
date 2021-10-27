@@ -1,3 +1,4 @@
+"""Implementation of Neural Network algorithm."""
 import numpy as np
 from pathlib import Path
 import pickle
@@ -5,6 +6,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 
 class NeuralNetwork:
+    """Neural Network class."""
+
     def __init__(
         self,
         input_size,
@@ -15,7 +18,7 @@ class NeuralNetwork:
         verbose_iteration=100,
     ):
         """
-        Initializes the NeuralNetwork class
+        Initialize the NeuralNetwork class.
 
         Args:
             input_size: The number of inputs
@@ -37,9 +40,7 @@ class NeuralNetwork:
         self._initialize_parameters()
 
     def _initialize_parameters(self):
-        """
-        Initializes the parameters for the NeuralNetwork class
-        """
+        """Initialize the parameters for the NeuralNetwork class."""
         self.grads = {}
         self.parameters = {}
         layers = [(self.input_size, None)] + self.layers
@@ -52,7 +53,7 @@ class NeuralNetwork:
 
     def _forward(self, X):
         """
-        Performs forward propagation
+        Perform forward propagation.
 
         Args:
             X: A numpy.ndarray with shape (nx, m) that contains the input data
@@ -72,7 +73,7 @@ class NeuralNetwork:
 
     def _backward(self, A, Y):
         """
-        Performs backward propagation
+        Perform backward propagation.
 
         Args:
             A: A numpy.ndarray with shape (1, m) containing the predictions
@@ -80,7 +81,6 @@ class NeuralNetwork:
         Returns:
             dA: A numpy.ndarray with shape (nx, m) that contains the gradients of the cost with respect to A
         """
-
         # Initialize gradient dA
         dA = self.cost_function(Y, A, deriv=True)
 
@@ -98,9 +98,7 @@ class NeuralNetwork:
             )
 
     def _update_parameters(self):
-        """
-        Updates the parameters using gradient descent
-        """
+        """Update the parameters using gradient descent."""
         L = len(self.layers)
         for l in range(1, L + 1):
             self.parameters["W" + str(l)] = (
@@ -114,13 +112,12 @@ class NeuralNetwork:
 
     def fit(self, X, Y, epochs=1, validation_data=None):
         """
-        Trains the model
+        Train the model.
 
         Args:
             X: A numpy.ndarray with shape (nx, m) that contains the input data
             Y: A numpy.ndarray with shape (1, m) that contains the training labels
         """
-
         for i in range(epochs):
             A = self._forward(X)
             cost = self.cost_function(Y, A)
@@ -143,7 +140,7 @@ class NeuralNetwork:
 
     def predict(self, X):
         """
-        Predicts the output of the model for a set of inputs
+        Predict the output of the model for a set of inputs.
 
         Args:
             X: A numpy.ndarray with shape (nx, m) that contains the input data
@@ -160,7 +157,7 @@ class NeuralNetwork:
 
     def evaluate(self, X, Y, zero_division=0):
         """
-        Evaluates the model's predictions
+        Evaluate the model's predictions.
 
         Args:
             X: A numpy.ndarray with shape (nx, m) that contains the input data
@@ -203,7 +200,7 @@ class NeuralNetwork:
 
     def save(self, filename):
         """
-        Saves the model to a file
+        Save the model to a file.
 
         Args:
             filename: A string containing the path to the file
@@ -215,7 +212,7 @@ class NeuralNetwork:
     @staticmethod
     def load(filename):
         """
-        Loads a model from a file
+        Load a model from a file.
 
         Args:
             filename: A string containing the path to the file

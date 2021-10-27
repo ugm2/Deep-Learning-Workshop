@@ -1,10 +1,9 @@
+"""Implementation of Cost Functions."""
 import numpy as np
 
 
 def binary_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
-    """
-    Binary Crossentropy
-    """
+    """Binary Crossentropy."""
     # Prevent overflow
     outputs = np.clip(y_pred, eps, 1 - eps)
     divisor = np.maximum(outputs * (1 - outputs), eps)
@@ -21,9 +20,7 @@ def binary_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
 
 
 def categorical_crossentropy(y_true, y_pred, deriv=False, eps=1e-12):
-    """
-    Categorical Crossentropy
-    """
+    """Categorical Crossentropy."""
     # Prevent overflow
     outputs = np.clip(y_pred, eps, 1 - eps)
     divisor = np.maximum(outputs * (1 - outputs), eps)

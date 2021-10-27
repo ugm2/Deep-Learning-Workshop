@@ -1,6 +1,4 @@
-"""
-Unit tests for DL Workshop
-"""
+"""Unit tests for DL Workshop."""
 
 import unittest
 

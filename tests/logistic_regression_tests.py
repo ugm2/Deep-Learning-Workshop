@@ -1,6 +1,4 @@
-"""
-Unit tests for Logistic Regression
-"""
+"""Unit tests for Logistic Regression."""
 
 import pickle
 import unittest
@@ -20,14 +18,10 @@ logger = logging.getLogger("Logistic Regression tests")
 
 
 class LogisticRegressionUnitTests(unittest.TestCase):
-    """
-    Unit tests for Logistic Regression
-    """
+    """Unit tests for Logistic Regression."""
 
     def test_init(self):
-        """
-        Test the initialization of Logistic Regression
-        """
+        """Test the initialization of Logistic Regression."""
         _log_test_title("Test the initialization of Logistic Regression", logger)
 
         learning_rate = 0.01
@@ -42,9 +36,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         self.assertEqual(lr.costs, None)
 
     def test_init_params(self):
-        """
-        Test the initialization of Logistic Regression with parameters
-        """
+        """Test the initialization of Logistic Regression with parameters."""
         _log_test_title("Test Logistic Regression init_params method", logger)
 
         lr = LogisticRegression(0.01, False)
@@ -58,9 +50,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
     @mock.patch("dl_workshop.activation_functions.sigmoid")
     @mock.patch("dl_workshop.cost_functions.binary_crossentropy")
     def test_propagate(self, mock_cost_function, sigmoid_mock, init_params_mock):
-        """
-        Test the propagation of Logistic Regression
-        """
+        """Test the propagation of Logistic Regression."""
         _log_test_title("Test the propagation of Logistic Regression", logger)
 
         # Mock the init_params method
@@ -91,9 +81,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
     @mock.patch("dl_workshop.logistic_regression.LogisticRegression.init_params")
     @mock.patch("dl_workshop.logistic_regression.LogisticRegression.propagate")
     def test_optimize(self, mock_propagate, init_params_mock):
-        """
-        Test the optimization of Logistic Regression
-        """
+        """Test the optimization of Logistic Regression."""
         _log_test_title("Test the optimization of Logistic Regression", logger)
 
         # Mock the init_params method
@@ -121,9 +109,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
     @mock.patch("dl_workshop.logistic_regression.LogisticRegression.init_params")
     @mock.patch("dl_workshop.activation_functions.sigmoid")
     def test_predict(self, mock_sigmoid, init_params_mock):
-        """
-        Test the prediction of Logistic Regression
-        """
+        """Test the prediction of Logistic Regression."""
         _log_test_title("Test the prediction of Logistic Regression", logger)
 
         # Mock the init_params method
@@ -145,9 +131,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
     @mock.patch("dl_workshop.logistic_regression.LogisticRegression.optimize")
     @mock.patch("dl_workshop.logistic_regression.LogisticRegression.predict")
     def test_fit(self, mock_predict, mock_optimize, init_params_mock):
-        """
-        Test the fit of Logistic Regression
-        """
+        """Test the fit of Logistic Regression."""
         import io
         import sys
 
@@ -181,9 +165,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
 
     @mock.patch("dl_workshop.logistic_regression.LogisticRegression.predict")
     def test_evaluate(self, mock_predict):
-        """
-        Test the evaluation of Logistic Regression
-        """
+        """Test the evaluation of Logistic Regression."""
         _log_test_title("Test the evaluation of Logistic Regression", logger)
 
         # Mock the predict method
@@ -203,9 +185,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         self.assertEqual(f1, 0.67)
 
     def test_save(self):
-        """
-        Test the save of Logistic Regression
-        """
+        """Test the save of Logistic Regression."""
         _log_test_title("Test the save of Logistic Regression", logger)
 
         lr = LogisticRegression(0.01, True)
@@ -233,9 +213,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
         os.remove("test_save.pkl")
 
     def test_load(self):
-        """
-        Test the load of Logistic Regression
-        """
+        """Test the load of Logistic Regression."""
         _log_test_title("Test the load of Logistic Regression", logger)
 
         lr = LogisticRegression(0.01, True)
@@ -265,6 +243,7 @@ class LogisticRegressionUnitTests(unittest.TestCase):
 
 
 def load_data(path):
+    """Load data from path for Cat vs Not Cat dataset."""
     train_dataset = h5py.File(path + "data/train_catvnoncat.h5", "r")
     train_set_x_orig = np.array(
         train_dataset["train_set_x"][:]
@@ -286,14 +265,10 @@ def load_data(path):
 
 
 class LogisticRegressionIntegrationTests(unittest.TestCase):
-    """
-    Integration tests for Logistic Regression
-    """
+    """Integration tests for Logistic Regression."""
 
     def test_train_evaluate(self):
-        """
-        Test the training and evaluation of Logistic Regression
-        """
+        """Test the training and evaluation of Logistic Regression."""
         _log_test_title(
             "Test the training and evaluation of Logistic Regression", logger
         )

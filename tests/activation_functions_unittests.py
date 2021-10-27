@@ -1,6 +1,4 @@
-"""
-Unit tests for Activation Functions
-"""
+"""Unit tests for Activation Functions."""
 
 import unittest
 import numpy as np
@@ -22,14 +20,10 @@ logger = logging.getLogger("Activation Functions unittest")
 
 
 class ActivationFunctionTests(unittest.TestCase):
-    """
-    Unit tests for Activation Functions
-    """
+    """Unit tests for Activation Functions."""
 
     def test_sigmoid(self):
-        """
-        Test sigmoid function
-        """
+        """Test sigmoid function."""
         _log_test_title("Test sigmoid function", logger)
         x = np.array([-100, -1, 0, 1, 100])
         y = sigmoid(x)
@@ -45,9 +39,7 @@ class ActivationFunctionTests(unittest.TestCase):
         self.assertTrue(np.allclose(y, [0.0, 0.19661193, 0.25, 0.19661193, 0.0]))
 
     def test_tanh(self):
-        """
-        Test tanh function
-        """
+        """Test tanh function."""
         _log_test_title("Test tanh function", logger)
         x = np.array([-100, -1, 0, 1, 100])
         y = tanh(x)
@@ -63,9 +55,7 @@ class ActivationFunctionTests(unittest.TestCase):
         self.assertTrue(np.allclose(y, [0.0, 0.41997434, 1.0, 0.41997434, 0.0]))
 
     def test_relu(self):
-        """
-        Test relu function
-        """
+        """Test relu function."""
         _log_test_title("Test relu function", logger)
         x = np.array([-100, -1, 0, 1, 100])
         y = relu(x)
@@ -81,9 +71,7 @@ class ActivationFunctionTests(unittest.TestCase):
         self.assertTrue(np.allclose(y, [0.0, 0.0, 0.0, 1.0, 1.0]))
 
     def test_leaky_relu(self):
-        """
-        Test leaky relu function
-        """
+        """Test leaky relu function."""
         _log_test_title("Test leaky relu function", logger)
         x = np.array([-100, -1, 0, 1, 100])
         y = leaky_relu(x)
@@ -99,9 +87,7 @@ class ActivationFunctionTests(unittest.TestCase):
         self.assertTrue(np.allclose(y, [0.01, 0.01, 0.01, 1.0, 1.0]))
 
     def test_leaky_relu_custom(self):
-        """
-        Test leaky relu function
-        """
+        """Test leaky relu function."""
         _log_test_title("Test leaky relu function", logger)
         x = np.array([-100, -1, 0, 1, 100])
         y = leaky_relu_custom(x)
@@ -117,9 +103,7 @@ class ActivationFunctionTests(unittest.TestCase):
         self.assertTrue(np.allclose(y, [0.0, 0.0, 0.0, 1.0, 1.0]))
 
     def test_softmax(self):
-        """
-        Test softmax function
-        """
+        """Test softmax function."""
         _log_test_title("Test softmax function", logger)
         x = np.array([-100, -1, 0, 1, 100])
         y = softmax(x)

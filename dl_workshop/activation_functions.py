@@ -1,10 +1,9 @@
+"""Implementation of Activation Functions."""
 import numpy as np
 
 
 def sigmoid(x, deriv=False):
-    """
-    Sigmoid activation function
-    """
+    """Sigmoid activation function."""
     # Prevent overflow
     x = np.clip(x, -709, 709)
 
@@ -19,9 +18,7 @@ def sigmoid(x, deriv=False):
 
 
 def tanh(x, deriv=False):
-    """
-    Tanh activation function
-    """
+    """Tanh activation function."""
     # Tanh
     x = np.tanh(x)
 
@@ -33,9 +30,7 @@ def tanh(x, deriv=False):
 
 
 def relu(x, deriv=False):
-    """
-    ReLU activation function
-    """
+    """Relu activation function."""
     # Partial derivative of ReLU
     if deriv:
         return (x > 0).astype(float)
@@ -45,9 +40,7 @@ def relu(x, deriv=False):
 
 
 def leaky_relu(x, deriv=False, leakage=0.01):
-    """
-    Leaky ReLU activation function
-    """
+    """Leaky ReLU activation function."""
     # Partial derivative of Leaky ReLU
     if deriv:
         return np.clip(x > 0, leakage, 1.0)
@@ -57,9 +50,7 @@ def leaky_relu(x, deriv=False, leakage=0.01):
 
 
 def leaky_relu_custom(x, deriv=False, leakage=0.01):
-    """
-    Leaky ReLU activation function
-    """
+    """Leaky ReLU activation function."""
     # Partial derivative of ReLU (works best in some cases)
     if deriv:
         return (x > 0).astype(float)
@@ -69,10 +60,7 @@ def leaky_relu_custom(x, deriv=False, leakage=0.01):
 
 
 def softmax(x, deriv=False):
-    """
-    Softmax activation function
-    """
-
+    """Softmax activation function."""
     # Softmax
     e_x = np.exp(x - np.max(x))
     x = e_x / np.sum(e_x, axis=0, keepdims=True)

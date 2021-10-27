@@ -1,6 +1,4 @@
-"""
-Unit tests for Neural Network
-"""
+"""Unit tests for Neural Network."""
 
 import pickle
 import unittest
@@ -25,27 +23,19 @@ logger = logging.getLogger("Neural Network tests")
 
 
 class NeuralNetworkUnitTests(unittest.TestCase):
-    """
-    Unit tests for Neural Network
-    """
+    """Unit tests for Neural Network."""
 
     @classmethod
     def setUpClass(cls):
-        """
-        Set up all tests
-        """
+        """Set up all tests."""
         super(NeuralNetworkUnitTests, cls).setUpClass()
 
     def setUp(self):
-        """
-        Set up all tests
-        """
+        """Set up all tests."""
         np.random.seed(42)
 
     def test_init(self):
-        """
-        Test Neural Network initialization
-        """
+        """Test Neural Network initialization."""
         _log_test_title("Neural Network initialization", logger)
 
         input_size = 2
@@ -71,9 +61,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
         self.assertEqual(nn.verbose_iteration, verbose_iteration)
 
     def test_initialize_parameters(self):
-        """
-        Test Neural Network initialization
-        """
+        """Test Neural Network initialization."""
         _log_test_title("Neural Network initialization", logger)
 
         input_size = 2
@@ -109,9 +97,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
         self.assertEqual(nn.grads, {})
 
     def test_forward(self):
-        """
-        Test Neural Network forward propagation
-        """
+        """Test Neural Network forward propagation."""
         _log_test_title("Neural Network forward propagation", logger)
 
         input_size = 2
@@ -164,9 +150,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
         assert np.allclose(A2, np.array([[-0.28657781, -0.22336633]]))
 
     def test_backward(self):
-        """
-        Test Neural Network backward propagation
-        """
+        """Test Neural Network backward propagation."""
         _log_test_title("Neural Network backward propagation", logger)
 
         input_size = 2
@@ -224,9 +208,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
         assert np.allclose(nn.grads["db2"], np.array([[-0.20929858]]))
 
     def test_update_parameters(self):
-        """
-        Test Neural Network update parameters
-        """
+        """Test Neural Network update parameters."""
         _log_test_title("Neural Network update parameters", logger)
 
         input_size = 2
@@ -286,9 +268,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
 
     @mock.patch("dl_workshop.neural_network.NeuralNetwork._forward")
     def test_predict(self, mock_forward):
-        """
-        Test Neural Network predict
-        """
+        """Test Neural Network predict."""
         _log_test_title("Neural Network predict", logger)
 
         input_size = 2
@@ -322,9 +302,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
 
     @mock.patch("dl_workshop.neural_network.NeuralNetwork.predict")
     def test_evaluate(self, mock_predict):
-        """
-        Test Neural Network evaluate
-        """
+        """Test Neural Network evaluate."""
         _log_test_title("Neural Network evaluate", logger)
 
         input_size = 2
@@ -358,9 +336,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
         self.assertEqual(metrics["f1"], 0.67)
 
     def test_save(self):
-        """
-        Test Neural Network save
-        """
+        """Test Neural Network save."""
         _log_test_title("Neural Network save", logger)
 
         input_size = 2
@@ -419,9 +395,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
         os.remove("test_save.pkl")
 
     def test_load(self):
-        """
-        Test Neural Network load
-        """
+        """Test Neural Network load."""
         _log_test_title("Neural Network load", logger)
 
         input_size = 2
@@ -485,6 +459,7 @@ class NeuralNetworkUnitTests(unittest.TestCase):
 
 
 def load_data(path):
+    """Load data from path for Cat vs Not Cat dataset."""
     train_dataset = h5py.File(path + "data/train_catvnoncat.h5", "r")
     train_set_x_orig = np.array(
         train_dataset["train_set_x"][:]
@@ -506,27 +481,19 @@ def load_data(path):
 
 
 class NeuralNetworkIntegrationTests(unittest.TestCase):
-    """
-    Integration tests for Neural Network
-    """
+    """Integration tests for Neural Network."""
 
     @classmethod
     def setUpClass(cls):
-        """
-        Set up all tests
-        """
+        """Set up all tests."""
         super(NeuralNetworkIntegrationTests, cls).setUpClass()
 
     def setUp(self):
-        """
-        Set up all tests
-        """
+        """Set up all tests."""
         np.random.seed(1)
 
     def test_train_evaluate_binary_classification(self):
-        """
-        Test the training and evaluation of Neural Network
-        """
+        """Test the training and evaluation of Neural Network."""
         _log_test_title(
             "Test the training and evaluation of Neural Network for Binary Classification",
             logger,
@@ -564,9 +531,7 @@ class NeuralNetworkIntegrationTests(unittest.TestCase):
         self.assertEqual(metrics["f1"], 0.06)
 
     def test_train_evaluate_multi_classification(self):
-        """
-        Test the training and evaluation of Neural Network
-        """
+        """Test the training and evaluation of Neural Network."""
         _log_test_title(
             "Test the training and evaluation of Neural Network for Multi Classification",
             logger,
