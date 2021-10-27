@@ -23,6 +23,7 @@ jobs:
           pip install -r requirements.txt
           pip install coverage
           pip install coverage-badge
+          pip install readme-coverage-badger
 
       - name: Test with unittest
         run: |
@@ -33,6 +34,7 @@ jobs:
           coverage report
           coverage html
           coverage-badge
+          readme-cov
   
   linting:
     runs-on: ubuntu-latest
