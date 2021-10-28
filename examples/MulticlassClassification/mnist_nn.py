@@ -22,13 +22,13 @@ print(f"x_test.shape: {x_test.shape}")
 print(f"y_train.shape: {y_train.shape}")
 print(f"y_test.shape: {y_test.shape}")
 
-# Reshape the training and test examples 
+# Reshape the training and test examples
 x_train_flatten = x_train.reshape(x_train.shape[0], -1)
 x_test_flatten = x_test.reshape(x_test.shape[0], -1)
 
 # Standardize data to have feature values between 0 and 1.
-x_train = x_train_flatten/255.
-x_test = x_test_flatten/255.
+x_train = x_train_flatten / 255.0
+x_test = x_test_flatten / 255.0
 
 #  shrink data size
 x_train = x_train[:].T
@@ -46,14 +46,12 @@ print("y_train's shape: " + str(y_train.shape))
 print("y_test's shape: " + str(y_test.shape))
 
 nn_model = NeuralNetwork(
-    n_inputs=x_train.shape[0],
-    layers=[
-        (128, relu), (64, relu), (32, relu), (y_train.shape[0], softmax)
-    ],
+    input_size=x_train.shape[0],
+    layers=[(128, relu), (64, relu), (32, relu), (y_train.shape[0], softmax)],
     cost_function=categorical_crossentropy,
     learning_rate=0.05,
     verbose=True,
-    verbose_iteration=10
+    verbose_iteration=10,
 )
 nn_model.fit(x_train, y_train, epochs=80, validation_data=(x_test, y_test))
 

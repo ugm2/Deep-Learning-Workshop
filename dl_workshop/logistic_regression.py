@@ -1,28 +1,30 @@
+"""Implementation of Logistic Regression algorithm."""
 import numpy as np
 from dl_workshop.activation_functions import sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
+from pathlib import Path
+import pickle
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 
 class LogisticRegression:
+    """Logistic Regression class."""
 
     def __init__(self, learning_rate=0.01, verbose=False):
+        """Init method."""
         self.learning_rate = learning_rate
         self.verbose = verbose
         self.w, self.b = None, None
         self.grads, self.costs = None, None
 
     def init_params(self, dim):
-        """
-        Initialize weights and bias as a vector of given dimension
-        """
+        """Initialize weights and bias as a vector of given dimension."""
         w = np.zeros((dim, 1))
         b = 0.0
         return w, b
 
     def propagate(self, X, Y):
-        """
-        Implement the cost function and its gradient
-        """
+        """Propagate the forward and backward pass of the model."""
         m = X.shape[1]
 
         # Forward propagation
@@ -30,20 +32,17 @@ class LogisticRegression:
         cost = binary_crossentropy(Y, A)
 
         # Backward propagation
-        dw = np.dot(X, (A-Y).T) / m
-        db = np.sum(A-Y) / m
+        dw = np.dot(X, (A - Y).T) / m
+        db = np.sum(A - Y) / m
 
         cost = np.squeeze(cost)
 
-        grads = {"dw": dw,
-                 "db": db}
+        grads = {"dw": dw, "db": db}
 
         return grads, cost
 
     def optimize(self, X, Y, epochs):
-        """
-        Optimize the weights and bias by running a gradient descent algorithm
-        """
+        """Optimize the weights and bias by running a gradient descent algorithm."""
         costs = []
         for i in range(epochs):
             grads, cost = self.propagate(X, Y)
@@ -59,15 +58,12 @@ class LogisticRegression:
                 if self.verbose:
                     print("Cost after iteration %i: %f" % (i, cost))
 
-        grads = {"dw": dw,
-                 "db": db}
+        grads = {"dw": dw, "db": db}
 
         return grads, costs
 
     def fit(self, X, Y, epochs=1, validation_data=None):
-        """
-        Fit the model given data
-        """
+        """Fit the model given data."""
         # Initialize weights and bias if None
         if self.w is None or self.b is None:
             self.w, self.b = self.init_params(X.shape[0])
@@ -81,25 +77,34 @@ class LogisticRegression:
             Y_prediction_validation = None
         # Print results if verbose is True
         if self.verbose:
-            print("train accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_train - Y)) * 100))
-            print("validation accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_validation - validation_data[1])) * 100))
+            print(
+                "train accuracy: {} %".format(
+                    100 - np.mean(np.abs(Y_prediction_train - Y)) * 100
+                )
+            )
+            if validation_data:
+                print(
+                    "validation accuracy: {} %".format(
+                        100
+                        - np.mean(np.abs(Y_prediction_validation - validation_data[1]))
+                        * 100
+                    )
+                )
 
     def predict(self, X):
-        """
-        Predict whether the label is 0 or 1 using learned logistic regression parameters (w, b)
-        """
+        """Predict whether the label is 0 or 1 using learned logistic regression parameters (w, b)."""
         w = self.w.reshape(X.shape[0], 1)
 
         # Compute vector "A" predicting the probabilities of the input X being of either class
         A = sigmoid(np.dot(w.T, X) + self.b)
 
-        Y_prediction = A > np.full(A.shape, 0.5)
+        Y_prediction = np.where(A > 0.5, 1, 0)
 
         return Y_prediction
 
     def evaluate(self, X, Y):
         """
-        Evaluates the model's predictions
+        Evaluate the model's predictions.
 
         Args:
             X: A numpy.ndarray with shape (nx, m) that contains the input data
@@ -109,28 +114,45 @@ class LogisticRegression:
         """
         # Predict and apply threshold 0.5
         Y_prediction = self.predict(X)
-        Y_prediction = np.where(Y_prediction > 0.5, 1, 0)
-        
+
+        # Flatten both Y and Y_prediction
+        Y = Y.flatten()
+        Y_prediction = Y_prediction.flatten()
+
         # Obtain accuracy, precision, recall, and F1 score
-        accuracy = np.sum(Y_prediction == Y) / Y.shape[1]
-        precision = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
-        recall = np.sum(np.logical_and(Y_prediction == Y, Y == 1)) / np.sum(Y == 1)
-        f1 = 2 * precision * recall / (precision + recall)
-        
+        accuracy = accuracy_score(Y, Y_prediction)
+        precision = precision_score(Y, Y_prediction, average="macro")
+        recall = recall_score(Y, Y_prediction, average="macro")
+        f1 = f1_score(Y, Y_prediction, average="macro")
+
         # Return as a dictionary
-        return {'accuracy': round(accuracy, 2),
-                'precision': round(precision, 2),
-                'recall': round(recall, 2),
-                'f1': round(f1, 2)}
+        return {
+            "accuracy": round(accuracy, 2),
+            "precision": round(precision, 2),
+            "recall": round(recall, 2),
+            "f1": round(f1, 2),
+        }
 
-    def save(self, path):
+    def save(self, filename):
         """
-        Save the model parameters to the given path
-        """
-        np.save(path, np.array([self.w, self.b], dtype=object))
+        Save the model to a file.
 
-    def load(self, path):
+        Args:
+            filename: A string containing the path to the file
         """
-        Load model parameters from the given path
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
+        with open(filename + ".pkl", "wb") as file:
+            pickle.dump(self, file)
+
+    @staticmethod
+    def load(filename):
         """
-        self.w, self.b = np.load(path, allow_pickle=True)
+        Load a model from a file.
+
+        Args:
+            filename: A string containing the path to the file
+        Returns:
+            model: A NeuralNetwork instance
+        """
+        with open(filename + ".pkl", "rb") as file:
+            return pickle.load(file)

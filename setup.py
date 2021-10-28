@@ -14,24 +14,28 @@ loc = path.abspath(path.dirname(__file__))
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
-with open(loc + '/requirements.txt') as f:
+with open(loc + "/requirements.txt") as f:
     requirements = f.read().splitlines()
 
 required = []
 dependency_links = []
 # do not add lines pointing to git repositories
-EGG_MARK = '#egg='
+EGG_MARK = "#egg="
 for line in requirements:
-    if line.startswith('-e git:') or line.startswith('-e git+') or \
-            line.startswith('git:') or line.startswith('git+'):
+    if (
+        line.startswith("-e git:")
+        or line.startswith("-e git+")
+        or line.startswith("git:")
+        or line.startswith("git+")
+    ):
         if EGG_MARK in line:
-            package_name = line[line.find(EGG_MARK) + len(EGG_MARK):]
+            package_name = line[line.find(EGG_MARK) + len(EGG_MARK) :]
             required.append(package_name)
             dependency_links.append(line)
         else:
-            print('Dependency to a git repository should have the format:')
-            print('git+ssh://git@github.com/repo#egg=repol')
-    elif line.startswith('https://'):
+            print("Dependency to a git repository should have the format:")
+            print("git+ssh://git@github.com/repo#egg=repol")
+    elif line.startswith("https://"):
         dependency_links.append(line)
     else:
         required.append(line)
@@ -43,19 +47,16 @@ setup(
     #
     # $ pip install sampleproject
     #
-    name='dl_workshop',  # Required
-
+    name="dl_workshop",  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #
-    version='0.0.1',  # Required
-
+    version="0.0.1",  # Required
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='Implementation of some of the main Deep Learning Algorithms with some examples',
+    description="Implementation of some of the main Deep Learning Algorithms with some examples",
     # Required
-
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
     #
@@ -66,14 +67,12 @@ setup(
     #   py_modules=["my_module"],
     #
     packages=find_packages(),  # Required
-
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
     #
     install_requires=required,
     dependency_links=dependency_links,
-
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:
