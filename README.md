@@ -1,5 +1,3 @@
-[![Coverage Status](./reports/coverage/coverage-badge.svg?dummy=8484744)](./reports/coverage/index.html)
-
 # Deep Learning Workshop
 Implementation of some of the main Deep Learning Algorithms from scratch with some examples
 
