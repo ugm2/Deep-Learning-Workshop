@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 import pickle
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from dl_workshop.parameters_initialisation import xavier_initialization
 
 
 class NeuralNetwork:
@@ -13,6 +14,7 @@ class NeuralNetwork:
         input_size,
         layers,
         cost_function,
+        initialization_method=xavier_initialization,
         learning_rate=0.01,
         verbose=False,
         verbose_iteration=100,
@@ -37,14 +39,18 @@ class NeuralNetwork:
         self.cost_function = cost_function
 
         # Initialize parameters
-        self._initialize_parameters()
+        init_params = initialization_method(
+            [input_size] + [layer[0] for layer in layers],
+        )
+        self.parameters = init_params["parameters"]
+        self.grads = init_params["grads"]
+        # self._initialize_parameters()
 
     def _initialize_parameters(self):
         """Initialize the parameters for the NeuralNetwork class."""
         self.grads = {}
         self.parameters = {}
         layers = [(self.input_size, None)] + self.layers
-
         for l in range(1, len(layers)):
             self.parameters["W" + str(l)] = np.random.randn(
                 layers[l][0], layers[l - 1][0]

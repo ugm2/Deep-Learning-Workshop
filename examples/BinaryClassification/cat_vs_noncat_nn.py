@@ -3,6 +3,7 @@ import h5py
 from dl_workshop.neural_network import NeuralNetwork
 from dl_workshop.activation_functions import leaky_relu_custom, sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
+from dl_workshop.parameters_initialisation import xavier_initialization
 
 np.random.seed(1)
 
@@ -66,6 +67,7 @@ nn_model = NeuralNetwork(
     ],
     learning_rate=0.0075,
     cost_function=binary_crossentropy,
+    initialization_method=xavier_initialization,
     verbose=False,
 )
 nn_model.fit(train_x, train_y, epochs=200, validation_data=(test_x, test_y))
