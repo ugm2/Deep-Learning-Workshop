@@ -14,7 +14,7 @@ class NeuralNetwork:
         input_size,
         layers,
         cost_function,
-        initialization_method=xavier_initialization,
+        initialisation_method=xavier_initialization,
         learning_rate=0.01,
         verbose=False,
         verbose_iteration=100,
@@ -39,7 +39,7 @@ class NeuralNetwork:
         self.cost_function = cost_function
 
         # Initialize parameters
-        init_params = initialization_method(
+        init_params = initialisation_method(
             [input_size] + [layer[0] for layer in layers],
         )
         self.parameters = init_params["parameters"]
