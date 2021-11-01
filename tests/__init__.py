@@ -8,6 +8,7 @@ import logging
 
 from tests.activation_functions_unittests import ActivationFunctionTests
 from tests.cost_functions_unittests import CostFunctionTests
+from tests.parameters_initialisation_unittests import ParametersInitialisationTests
 from tests.logistic_regression_tests import (
     LogisticRegressionUnitTests,
     LogisticRegressionIntegrationTests,
@@ -23,6 +24,7 @@ assert LogisticRegressionUnitTests
 assert LogisticRegressionIntegrationTests
 assert NeuralNetworkUnitTests
 assert NeuralNetworkIntegrationTests
+assert ParametersInitialisationTests
 
 sys.path.append(os.getcwd())
 

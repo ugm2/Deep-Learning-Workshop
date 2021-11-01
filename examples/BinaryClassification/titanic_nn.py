@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from dl_workshop.neural_network import NeuralNetwork
 from dl_workshop.activation_functions import relu, sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
+from dl_workshop.parameters_initialisation import he_initialization
 import pandas as pd
 import numpy as np
 
@@ -50,12 +51,14 @@ X_test = X_test.values.T
 
 nn_model = NeuralNetwork(
     input_size=X_train.shape[0],
-    layers=[(20, relu), (7, relu), (5, relu), (1, sigmoid)],
+    layers=[(28, relu), (14, relu), (7, relu), (5, relu), (1, sigmoid)],
     cost_function=binary_crossentropy,
-    learning_rate=0.0075,
-    verbose=False,
+    initialisation_method=he_initialization,
+    learning_rate=0.015,
+    verbose=True,
+    verbose_iteration=1000,
 )
-nn_model.fit(X_train, y_train, epochs=25000, validation_data=(X_val, y_val))
+nn_model.fit(X_train, y_train, epochs=30000, validation_data=(X_val, y_val))
 
 # Evaluate model with more metrics
 print("Evaluate on training data:")
