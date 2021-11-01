@@ -37,6 +37,8 @@ def he_initialization(dimensions, distribution="normal"):
             parameters["W" + str(d)] = np.random.uniform(
                 low=-limit, high=limit, size=(dimensions[d], dimensions[d - 1])
             )
+        else:
+            raise ValueError("Distribution must be either normal or uniform")
         parameters["b" + str(d)] = np.zeros((dimensions[d], 1))
     return {"parameters": parameters, "grads": {}}
 
@@ -55,5 +57,7 @@ def xavier_initialization(dimensions, distribution="uniform"):
             parameters["W" + str(d)] = np.random.normal(
                 0.0, limit, size=(dimensions[d], dimensions[d - 1])
             )
+        else:
+            raise ValueError("Distribution must be either normal or uniform")
         parameters["b" + str(d)] = np.zeros((dimensions[d], 1))
     return {"parameters": parameters, "grads": {}}

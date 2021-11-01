@@ -151,6 +151,11 @@ class ParametersInitialisationTests(unittest.TestCase):
         grads = init_params["grads"]
         self.assertEqual(grads, {})
 
+        # DIFFERENT DISTRIBUTION
+        # Check it fails
+        with self.assertRaises(ValueError):
+            xavier_initialization(dimensions, distribution="invalid")
+
     def test_he_initialization(self):
         """Test he initialization."""
         _log_test_title("Test he initialization", logger)
@@ -220,3 +225,8 @@ class ParametersInitialisationTests(unittest.TestCase):
         assert np.array_equal(b2, np.zeros((dimensions[2], 1)))
         grads = init_params["grads"]
         self.assertEqual(grads, {})
+
+        # DIFFERENT DISTRIBUTION
+        # Check it fails
+        with self.assertRaises(ValueError):
+            he_initialization(dimensions, distribution="invalid")

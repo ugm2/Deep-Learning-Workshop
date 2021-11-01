@@ -44,7 +44,6 @@ class NeuralNetwork:
         )
         self.parameters = init_params["parameters"]
         self.grads = init_params["grads"]
-        # self._initialize_parameters()
 
     def _initialize_parameters(self):
         """Initialize the parameters for the NeuralNetwork class."""
