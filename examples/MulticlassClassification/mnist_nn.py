@@ -2,7 +2,8 @@ from tensorflow import keras
 from dl_workshop.neural_network import NeuralNetwork
 from dl_workshop.activation_functions import relu, softmax
 from dl_workshop.cost_functions import categorical_crossentropy
-from dl_workshop.parameters_initialisation import xavier_initialization
+from dl_workshop.parameters_initialisation import he_initialisation
+from dl_workshop.regularisation_functions import l2
 from tensorflow.keras.utils import to_categorical
 import numpy as np
 
@@ -50,12 +51,14 @@ nn_model = NeuralNetwork(
     input_size=x_train.shape[0],
     layers=[(128, relu), (64, relu), (32, relu), (y_train.shape[0], softmax)],
     cost_function=categorical_crossentropy,
-    initialisation_method=xavier_initialization,
+    initialisation_method=he_initialisation,
+    regularisation_method=l2,
+    lmbda=0.7,
     learning_rate=0.02,
     verbose=True,
     verbose_iteration=10,
 )
-nn_model.fit(x_train, y_train, epochs=100, validation_data=(x_test, y_test))
+nn_model.fit(x_train, y_train, epochs=150, validation_data=(x_test, y_test))
 
 # Evaluate model with more metrics
 print("Training data:")

@@ -6,10 +6,10 @@ import logging
 import os
 
 from dl_workshop.parameters_initialisation import (
-    zero_initialization,
-    random_initialization,
-    xavier_initialization,
-    he_initialization,
+    zero_initialisation,
+    random_initialisation,
+    xavier_initialisation,
+    he_initialisation,
 )
 
 from tests.utils import _log_test_title
@@ -34,7 +34,7 @@ class ParametersInitialisationTests(unittest.TestCase):
         """Test zero initialization."""
         _log_test_title("Test zero initialization", logger)
         dimensions = [2, 3, 4]
-        init_params = zero_initialization(dimensions)
+        init_params = zero_initialisation(dimensions)
         # Check init_params keys
         self.assertTrue("parameters" in init_params)
         self.assertTrue("grads" in init_params)
@@ -59,7 +59,7 @@ class ParametersInitialisationTests(unittest.TestCase):
         """Test random initialization."""
         _log_test_title("Test random initialization", logger)
         dimensions = [2, 3, 4]
-        init_params = random_initialization(dimensions)
+        init_params = random_initialisation(dimensions)
         # Check init_params keys
         self.assertTrue("parameters" in init_params)
         self.assertTrue("grads" in init_params)
@@ -87,7 +87,7 @@ class ParametersInitialisationTests(unittest.TestCase):
         dimensions = [2, 3, 4]
 
         # NORMAL DISTRIBUTION
-        init_params = xavier_initialization(dimensions, distribution="normal")
+        init_params = xavier_initialisation(dimensions, distribution="normal")
         # Check init_params keys
         self.assertTrue("parameters" in init_params)
         self.assertTrue("grads" in init_params)
@@ -117,7 +117,7 @@ class ParametersInitialisationTests(unittest.TestCase):
 
         # UNIFORM DISTRIBUTION
         np.random.seed(42)
-        init_params = xavier_initialization(dimensions, distribution="uniform")
+        init_params = xavier_initialisation(dimensions, distribution="uniform")
         # Check init_params keys
         self.assertTrue("parameters" in init_params)
         self.assertTrue("grads" in init_params)
@@ -154,7 +154,7 @@ class ParametersInitialisationTests(unittest.TestCase):
         # DIFFERENT DISTRIBUTION
         # Check it fails
         with self.assertRaises(ValueError):
-            xavier_initialization(dimensions, distribution="invalid")
+            xavier_initialisation(dimensions, distribution="invalid")
 
     def test_he_initialization(self):
         """Test he initialization."""
@@ -162,7 +162,7 @@ class ParametersInitialisationTests(unittest.TestCase):
         dimensions = [2, 3, 4]
 
         # NORMAL DISTRIBUTION
-        init_params = he_initialization(dimensions, distribution="normal")
+        init_params = he_initialisation(dimensions, distribution="normal")
         # Check init_params keys
         self.assertTrue("parameters" in init_params)
         self.assertTrue("grads" in init_params)
@@ -192,7 +192,7 @@ class ParametersInitialisationTests(unittest.TestCase):
 
         # UNIFORM DISTRIBUTION
         np.random.seed(42)
-        init_params = he_initialization(dimensions, distribution="uniform")
+        init_params = he_initialisation(dimensions, distribution="uniform")
         # Check init_params keys
         self.assertTrue("parameters" in init_params)
         self.assertTrue("grads" in init_params)
@@ -229,4 +229,4 @@ class ParametersInitialisationTests(unittest.TestCase):
         # DIFFERENT DISTRIBUTION
         # Check it fails
         with self.assertRaises(ValueError):
-            he_initialization(dimensions, distribution="invalid")
+            he_initialisation(dimensions, distribution="invalid")

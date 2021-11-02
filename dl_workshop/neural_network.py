@@ -3,7 +3,7 @@ import numpy as np
 from pathlib import Path
 import pickle
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from dl_workshop.parameters_initialisation import xavier_initialization
+from dl_workshop.parameters_initialisation import xavier_initialisation
 
 
 class NeuralNetwork:
@@ -14,7 +14,9 @@ class NeuralNetwork:
         input_size,
         layers,
         cost_function,
-        initialisation_method=xavier_initialization,
+        initialisation_method=xavier_initialisation,
+        regularisation_method=None,
+        lmbda=0.01,
         learning_rate=0.01,
         verbose=False,
         verbose_iteration=100,
@@ -37,6 +39,9 @@ class NeuralNetwork:
         self.layers = layers
         self.input_size = input_size
         self.cost_function = cost_function
+        self.initialisation_method = initialisation_method
+        self.regularisation_method = regularisation_method
+        self.lmbda = lmbda
 
         # Initialize parameters
         init_params = initialisation_method(
@@ -76,6 +81,24 @@ class NeuralNetwork:
 
         return A
 
+    def _loss(self, Y, A):
+        """
+        Calculate the cost.
+
+        Args:
+            Y: A numpy.ndarray with shape (1, m) that contains the training labels
+            A: A numpy.ndarray with shape (1, m) containing the activated output
+                of the neuron for each example
+        Returns:
+            The cost
+        """
+        if self.regularisation_method is not None:
+            return self.regularisation_method(
+                weights=[self.parameters["W" + str(i + 1)] for i in range(len(self.layers))],
+                lmbda=self.lmbda,
+                m=Y.shape[1]) + self.cost_function(Y, A)
+        return self.cost_function(Y, A)
+
     def _backward(self, A, Y):
         """
         Perform backward propagation.
@@ -102,6 +125,15 @@ class NeuralNetwork:
                 np.sum(dZ, axis=1, keepdims=True) / A_prev.shape[1]
             )
 
+        if self.regularisation_method is not None:
+            offsets = self.regularisation_method(
+                weights=[self.parameters["W" + str(i + 1)] for i in range(len(self.layers))],
+                lmbda=self.lmbda,
+                m=Y.shape[1],
+                backward=True)
+            for i in range(len(self.layers)):
+                self.grads["dW" + str(i + 1)] += offsets[i]
+
     def _update_parameters(self):
         """Update the parameters using gradient descent."""
         L = len(self.layers)
@@ -125,7 +157,7 @@ class NeuralNetwork:
         """
         for i in range(epochs):
             A = self._forward(X)
-            cost = self.cost_function(Y, A)
+            cost = self._loss(Y, A)
             self._backward(A, Y)
             self._update_parameters()
             if self.verbose and i % self.verbose_iteration == 0:

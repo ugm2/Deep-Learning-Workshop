@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 from dl_workshop.neural_network import NeuralNetwork
 from dl_workshop.activation_functions import relu, sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
-from dl_workshop.parameters_initialisation import he_initialization
+from dl_workshop.parameters_initialisation import he_initialisation
 import pandas as pd
 import numpy as np
 
@@ -53,7 +53,7 @@ nn_model = NeuralNetwork(
     input_size=X_train.shape[0],
     layers=[(28, relu), (14, relu), (7, relu), (5, relu), (1, sigmoid)],
     cost_function=binary_crossentropy,
-    initialisation_method=he_initialization,
+    initialisation_method=he_initialisation,
     learning_rate=0.015,
     verbose=True,
     verbose_iteration=1000,

@@ -3,7 +3,8 @@ import h5py
 from dl_workshop.neural_network import NeuralNetwork
 from dl_workshop.activation_functions import relu, sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
-from dl_workshop.parameters_initialisation import he_initialization
+from dl_workshop.parameters_initialisation import he_initialisation
+from dl_workshop.regularisation_functions import l1, l2
 
 np.random.seed(1)
 
@@ -67,7 +68,9 @@ nn_model = NeuralNetwork(
     ],
     learning_rate=0.0075,
     cost_function=binary_crossentropy,
-    initialisation_method=he_initialization,
+    initialisation_method=he_initialisation,
+    regularisation_method=l2,
+    lmbda=0.9,
     verbose=True,
 )
 nn_model.fit(train_x, train_y, epochs=200, validation_data=(test_x, test_y))
@@ -76,7 +79,7 @@ nn_model.save("models/cat_vs_noncat")
 
 nn_model_2 = NeuralNetwork.load("models/cat_vs_noncat")
 
-nn_model_2.fit(train_x, train_y, epochs=3000, validation_data=(test_x, test_y))
+nn_model_2.fit(train_x, train_y, epochs=4000, validation_data=(test_x, test_y))
 
 # Evaluate model with more metrics
 print("Training data:")

@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def zero_initialization(dimensions):
+def zero_initialisation(dimensions):
     """Return zero vectors for W and b."""
     parameters = {}
     for d in range(1, len(dimensions)):
@@ -12,7 +12,7 @@ def zero_initialization(dimensions):
     return {"parameters": parameters, "grads": {}}
 
 
-def random_initialization(dimensions):
+def random_initialisation(dimensions):
     """Return random vectors for W and b."""
     parameters = {}
     for d in range(1, len(dimensions)):
@@ -23,8 +23,8 @@ def random_initialization(dimensions):
     return {"parameters": parameters, "grads": {}}
 
 
-def he_initialization(dimensions, distribution="normal"):
-    """Return He initialization for W and b."""
+def he_initialisation(dimensions, distribution="normal"):
+    """Return He initialisation for W and b."""
     parameters = {}
     for d in range(1, len(dimensions)):
         if distribution == "normal":
@@ -43,8 +43,8 @@ def he_initialization(dimensions, distribution="normal"):
     return {"parameters": parameters, "grads": {}}
 
 
-def xavier_initialization(dimensions, distribution="uniform"):
-    """Return Xavier initialization for W and b."""
+def xavier_initialisation(dimensions, distribution="uniform"):
+    """Return Xavier initialisation for W and b."""
     parameters = {}
     for d in range(1, len(dimensions)):
         if distribution == "uniform":
