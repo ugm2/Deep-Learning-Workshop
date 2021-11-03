@@ -1,6 +1,6 @@
 # Deep Learning Workshop
 
-[![.github/workflows/workflow_cicd.yml](https://github.com/ugm2/Deep-Learning-Workshop/actions/workflows/workflow_cicd.yml/badge.svg?branch=main)](https://github.com/ugm2/Deep-Learning-Workshop/actions/workflows/workflow_cicd.yml)
+[![.github/workflows/workflow_ci.yml](https://github.com/ugm2/Deep-Learning-Workshop/actions/workflows/workflow_cicd.yml/badge.svg?branch=main)](https://github.com/ugm2/Deep-Learning-Workshop/actions/workflows/workflow_cicd.yml)
 
 Implementation of some of the main Deep Learning Algorithms from scratch with some examples
 
