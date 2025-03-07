@@ -23,7 +23,7 @@ jobs:
 
       - name: Installing dependencies
         run: |
-          uv pip install -r requirements.txt
+          uv pip install -e .
           uv pip install coverage coverage-badge genbadge[all]
 
       - name: Test with unittest
