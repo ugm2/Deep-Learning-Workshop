@@ -1,11 +1,20 @@
 from sklearn.model_selection import train_test_split
 from dl_workshop.logistic_regression import LogisticRegression
 import pandas as pd
+import os
+import git
 
+git_root = git.Repo(".", search_parent_directories=True).working_dir
 
 # Load Titanic dataset
-train = pd.read_csv("data/titanic_train.csv", index_col="PassengerId")
-test = pd.read_csv("data/titanic_test.csv", index_col="PassengerId")
+train = pd.read_csv(
+    os.path.join(git_root, "examples/BinaryClassification/data/titanic_train.csv"),
+    index_col="PassengerId",
+)
+test = pd.read_csv(
+    os.path.join(git_root, "examples/BinaryClassification/data/titanic_test.csv"),
+    index_col="PassengerId",
+)
 
 # Fill in missing values for Age and Embarked
 train["Age"] = train["Age"].fillna(train["Age"].median())
@@ -57,10 +66,14 @@ print("Evaluate on validation data:")
 print(lr_model.evaluate(X_val, y_val_shaped))
 
 # Save model
-lr_model.save("models/titanic_model")
+lr_model.save(
+    os.path.join(git_root, "examples/BinaryClassification/models/titanic_model")
+)
 
 # Load model from file
-lr_model = LogisticRegression.load("models/titanic_model")
+lr_model = LogisticRegression.load(
+    os.path.join(git_root, "examples/BinaryClassification/models/titanic_model")
+)
 
 # Train again
 lr_model.fit(
@@ -75,7 +88,9 @@ print("Evaluate on validation data:")
 print(lr_model.evaluate(X_val, y_val_shaped))
 
 # Overwrite best model
-lr_model.save("models/titanic_model")
+lr_model.save(
+    os.path.join(git_root, "examples/BinaryClassification/models/titanic_model")
+)
 
 ### THIS CODE IS FOR SUBMITTING RESULTS TO TITANIC KAGGLE COMPETITION ###
 # # Predict test set

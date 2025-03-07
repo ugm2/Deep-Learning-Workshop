@@ -1,4 +1,5 @@
 """Implementation of Cost Functions."""
+
 import numpy as np
 
 

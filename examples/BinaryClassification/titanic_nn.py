@@ -5,12 +5,22 @@ from dl_workshop.cost_functions import binary_crossentropy
 from dl_workshop.parameters_initialisation import he_initialization
 import pandas as pd
 import numpy as np
+import os
+import git
+
+git_root = git.Repo(".", search_parent_directories=True).working_dir
 
 np.random.seed(1)
 
 # Load Titanic dataset
-train = pd.read_csv("data/titanic_train.csv", index_col="PassengerId")
-test = pd.read_csv("data/titanic_test.csv", index_col="PassengerId")
+train = pd.read_csv(
+    os.path.join(git_root, "examples/BinaryClassification/data/titanic_train.csv"),
+    index_col="PassengerId",
+)
+test = pd.read_csv(
+    os.path.join(git_root, "examples/BinaryClassification/data/titanic_test.csv"),
+    index_col="PassengerId",
+)
 
 # Fill in missing values for Age and Embarked
 train["Age"] = train["Age"].fillna(train["Age"].median())
@@ -54,7 +64,7 @@ nn_model = NeuralNetwork(
     layers=[(28, relu), (14, relu), (7, relu), (5, relu), (1, sigmoid)],
     cost_function=binary_crossentropy,
     initialisation_method=he_initialization,
-    learning_rate=0.015,
+    learning_rate=0.02,
     verbose=True,
     verbose_iteration=1000,
 )

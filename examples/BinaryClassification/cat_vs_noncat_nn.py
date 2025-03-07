@@ -1,5 +1,7 @@
+import os
 import numpy as np
 import h5py
+import git
 from dl_workshop.neural_network import NeuralNetwork
 from dl_workshop.activation_functions import relu, sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
@@ -7,9 +9,17 @@ from dl_workshop.parameters_initialisation import he_initialization
 
 np.random.seed(1)
 
+repo = git.Repo(".", search_parent_directories=True)
+git_root = repo.working_tree_dir
+
 
 def load_data():
-    train_dataset = h5py.File("data/train_catvnoncat.h5", "r")
+    train_dataset = h5py.File(
+        os.path.join(
+            git_root, "examples/BinaryClassification/data/train_catvnoncat.h5"
+        ),
+        "r",
+    )
     train_set_x_orig = np.array(
         train_dataset["train_set_x"][:]
     )  # your train set features
@@ -17,7 +27,10 @@ def load_data():
         train_dataset["train_set_y"][:]
     )  # your train set labels
 
-    test_dataset = h5py.File("data/test_catvnoncat.h5", "r")
+    test_dataset = h5py.File(
+        os.path.join(git_root, "examples/BinaryClassification/data/test_catvnoncat.h5"),
+        "r",
+    )
     test_set_x_orig = np.array(test_dataset["test_set_x"][:])  # your test set features
     test_set_y_orig = np.array(test_dataset["test_set_y"][:])  # your test set labels
 
@@ -72,9 +85,18 @@ nn_model = NeuralNetwork(
 )
 nn_model.fit(train_x, train_y, epochs=200, validation_data=(test_x, test_y))
 
-nn_model.save("models/cat_vs_noncat")
+nn_model.save(
+    os.path.join(git_root, "examples/BinaryClassification/models/cat_vs_noncat")
+)
 
-nn_model_2 = NeuralNetwork.load("models/cat_vs_noncat")
+nn_model_2 = NeuralNetwork.load(
+    os.path.join(git_root, "examples/BinaryClassification/models/cat_vs_noncat")
+)
+
+print("Training data:")
+print(nn_model_2.evaluate(train_x, train_y))
+print("Validation data:")
+print(nn_model_2.evaluate(test_x, test_y))
 
 nn_model_2.fit(train_x, train_y, epochs=3000, validation_data=(test_x, test_y))
 

@@ -1,4 +1,5 @@
 """Implementation of Parameter Initialisation."""
+
 import numpy as np
 
 

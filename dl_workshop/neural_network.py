@@ -1,4 +1,5 @@
 """Implementation of Neural Network algorithm."""
+
 import numpy as np
 from pathlib import Path
 import pickle

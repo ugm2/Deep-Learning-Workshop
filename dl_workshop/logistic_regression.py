@@ -1,4 +1,5 @@
 """Implementation of Logistic Regression algorithm."""
+
 import numpy as np
 from dl_workshop.activation_functions import sigmoid
 from dl_workshop.cost_functions import binary_crossentropy
