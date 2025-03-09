@@ -35,6 +35,7 @@ jobs:
 
       - name: Coverage
         run: |
+          source .venv/bin/activate
           coverage report
   
   linting:
