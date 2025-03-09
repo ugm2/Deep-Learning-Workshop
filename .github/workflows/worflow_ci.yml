@@ -30,6 +30,7 @@ jobs:
 
       - name: Test with unittest
         run: |
+          source .venv/bin/activate
           python -m coverage run -m unittest
 
       - name: Coverage
