@@ -202,7 +202,7 @@ dependencies = [
     { name = "pandas" },
     { name = "scikit-learn" },
     { name = "tensorflow" },
-    { name = "tensorflow-macos" },
+    { name = "tensorflow-macos", marker = "sys_platform == 'darwin'" },
 ]
 
 [package.dev-dependencies]
@@ -219,7 +219,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "scikit-learn", specifier = ">=1.6.1" },
     { name = "tensorflow", specifier = ">=2.14.0" },
-    { name = "tensorflow-macos", specifier = ">=2.14.1" },
+    { name = "tensorflow-macos", marker = "sys_platform == 'darwin'", specifier = ">=2.14.1" },
 ]
 
 [package.metadata.requires-dev]

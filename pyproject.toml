@@ -10,7 +10,7 @@ dependencies = [
     "pandas>=2.2.3",
     "scikit-learn>=1.6.1",
     "tensorflow>=2.14.0",
-    "tensorflow-macos>=2.14.1",
+    "tensorflow-macos>=2.14.1; sys_platform == 'darwin'",
 ]
 
 [dependency-groups]
